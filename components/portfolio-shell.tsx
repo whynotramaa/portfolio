@@ -246,10 +246,10 @@ export default function PortfolioShell() {
           </dl>
 
           <div className="hero-actions">
-            <Link className="button" href="#contact">
+            <a className="button" href="mailto:hire.ramaa@gmail.com">
               say hello
               <span className="button-arrow">{"\u2197\uFE0E"}</span>
-            </Link>
+            </a>
             <ExternalLink className="text-link" href="https://github.com/whynotramaa">
               github.com/whynotramaa
             </ExternalLink>
@@ -329,9 +329,9 @@ export default function PortfolioShell() {
               <span className="note-index">01</span>
               <p className="hand note-title">into these lately</p>
               <ul>
-                <li>products people use without a manual</li>
-                <li>realtime systems that do not panic</li>
-                <li>sports, interfaces, and bad ideas with good names</li>
+                <li>llm and harness engineering to optimize tokens</li>
+                <li>go-lang for backend </li>
+                <li>research on image restoration using fcsg-net </li>
               </ul>
             </aside>
           </div>
