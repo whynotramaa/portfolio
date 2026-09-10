@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <style>
+    :root { --paper: #f7f6f2; --ink: #0f0f0e; --accent: #d9560f; }
+    @media (prefers-color-scheme: dark) {
+      :root { --paper: #0c0c0b; --ink: #f3f2ec; --accent: #ff8a42; }
+    }
+  </style>
+  <rect width="512" height="512" rx="112" fill="var(--paper)"/>
+  <!-- Syne 700 'r.', outlines extracted from public/fonts/Syne.woff2,
+       spaced at the wordmark's -0.035em tracking -->
+  <g transform="translate(46.5 423) scale(0.6577 -0.6577)">
+    <path fill="var(--ink)" d="M60 497H190V0H60ZM381 390Q325 390 284.0 368.5Q243 347 218.0 316.0Q193 285 183 256L182 311Q183 323 190.0 346.5Q197 370 211.0 397.5Q225 425 248.0 450.5Q271 476 304.0 492.0Q337 508 381 508Z"/>
+    <path fill="var(--accent)" transform="translate(366 0)" d="M211 114V0H60V114Z"/>
+  </g>
+</svg>
