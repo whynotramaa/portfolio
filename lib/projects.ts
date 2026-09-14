@@ -58,7 +58,7 @@ export const projects: Project[] = [
     problem: "Same-room games need private info, timers, votes, and content that lands fast.",
     built: "Guest-friendly rooms, four games, daily IPL puzzle, scores, and optional room voice.",
     tags: ["convex", "next.js", "webrtc"],
-    href: "https://playwhatever.vercel.app",
+    href: "https://playwhatever.ramaa.tech",
   },
   {
     number: "06",
@@ -68,7 +68,7 @@ export const projects: Project[] = [
     problem: "Search, trailers, ratings, and trend lists never seem to agree.",
     built: "Personalized picks, debounced infinite search, trailer playback, and live trending data.",
     tags: ["react", "tmdb", "appwrite"],
-    href: "https://movie-flix-chill.vercel.app",
+    href: "https://github.com/whynotramaa/movie-recommendation",
   },
   {
     number: "07",

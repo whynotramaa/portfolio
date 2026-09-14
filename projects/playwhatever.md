@@ -4,7 +4,7 @@
 - Solution: A fast guest-friendly party-game platform. Pick a game, create or join a room with a six-character code, pass the phone around. Four seeded games (Traitors, IPL Guessr, Dumb Charadess, Guess the Liar) plus a daily Player of the Day IPL puzzle, realtime lobby, optional WebRTC room voice, account stats and leaderboards.
 - Tech: Next.js 16 App Router + React 19 + TypeScript, Tailwind CSS 4, Convex 1.45 (database + realtime + scheduled state), Better Auth with Convex integration (anonymous sessions, email OTP, optional Google OAuth), WebRTC peer-to-peer audio, Vercel + Convex Cloud.
 - Link: https://github.com/whynotramaa/playwhatever
-- Website: https://playwhatever.vercel.app
+- Website: https://playwhatever.ramaa.tech
 
 ---
 

@@ -4,15 +4,14 @@
 - Solution: MovieFlix & Chill. Personalized recommendations with trending picks, debounced infinite-scroll search, in-app trailer playback, and real-time trending data.
 - Tech: React 19, Vite 6, Tailwind CSS 4, TMDB API (data + trailers), Appwrite (trending backend), react-use.
 - Link: https://github.com/whynotramaa/movie-recommendation (repo name is `movie-recommendation`)
-- Website: https://movie-flix-chill.vercel.app/
+- Website: none
 
 ---
 
 > Original README from https://github.com/whynotramaa/movie-recommendation below, kept verbatim.
 
 # 🎬 MovieFlix & Chill
-**Movie Recommender**  
-[🔗 Live Site](https://movie-flix-chill.vercel.app/)
+**Movie Recommender**
 
 ![UI Screenshot](./screenshot.png)
 ![UI Screenshot 2](./screenshot1.png)
