@@ -1,6 +1,6 @@
 /* ============================================================
    ramaa — brand: black ink on paper. no colour, ever.
-   type: Apple Garamond (voice) · Nono (margin notes) · mono (labels)
+   type: Apple Garamond (voice) · Peehu (margin notes) · mono (labels)
    ============================================================ */
 
 @font-face {
@@ -46,8 +46,8 @@
   font-display: swap;
 }
 @font-face {
-  font-family: "Nono";
-  src: url("/fonts/Nono.woff2") format("woff2");
+  font-family: "Peehu";
+  src: url("/fonts/Peehu-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -72,7 +72,7 @@
 
   --sans: "Syne", ui-sans-serif, system-ui, sans-serif;
   --serif: "Apple Garamond", "EB Garamond", Garamond, Georgia, serif;
-  --hand: "Nono", "Segoe Print", "Bradley Hand", cursive;
+  --hand: "Peehu", "Segoe Print", "Bradley Hand", cursive;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -152,10 +152,9 @@ h1 { font-weight: 400; }
 
 .hand {
   font-family: var(--hand);
-  font-size: 0.88em;
-  line-height: 1.25;
-  letter-spacing: 0.01em;
-  /* NoNo's ct/tt ligatures merge into shapes that misread ("actually" -> "adtually") */
+  font-size: 0.96em;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
   font-variant-ligatures: none;
 }
 
