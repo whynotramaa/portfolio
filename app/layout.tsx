@@ -8,14 +8,16 @@ export const metadata: Metadata = {
     "Products, interfaces, experiments, failed companies, sports, and difficult-to-explain things by a final-year computer science student.",
 };
 
-/** Runs before paint so a dark-mode visitor never sees a white flash. */
+const jpFont = `https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&display=swap&text=${encodeURIComponent(
+  "ラマーものづくり、ときどき冗談。私作品道具世界今縁ありがとう言語画面基盤",
+)}`;
+
 const themeScript = `
 try {
   var t = localStorage.getItem("ramaa-theme");
   if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   document.documentElement.dataset.theme = t;
 } catch (e) {}
-// scroll reveals only hide content when js is around to bring it back
 document.documentElement.classList.add("js");
 `;
 
@@ -24,7 +26,9 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preload" href="/fonts/AppleGaramond-Light.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/AppleGaramond.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Archivo.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={jpFont} />
         <link rel="preload" href="/fonts/Peehu-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

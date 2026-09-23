@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPost, getPosts } from "@/lib/posts";
+import { Wordmark } from "@/components/portfolio-shell";
 
 export function generateStaticParams() {
   return getPosts().map((post) => ({ slug: post.slug }));
@@ -15,7 +16,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   return (
     <main className="blog-page">
       <header className="blog-header">
-        <Link className="wordmark" href="/">ramaa<span className="wordmark-dot">.</span></Link>
+        <Wordmark />
         <Link className="label" href="/blog">all notes</Link>
       </header>
       <article className="blog-post">

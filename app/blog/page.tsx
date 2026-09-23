@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getPosts } from "@/lib/posts";
+import { ArrowIcon, Wordmark } from "@/components/portfolio-shell";
 
 export default function BlogPage() {
   const posts = getPosts();
@@ -7,9 +8,7 @@ export default function BlogPage() {
   return (
     <main className="blog-page">
       <header className="blog-header">
-        <Link className="wordmark" href="/">
-          ramaa<span className="wordmark-dot">.</span>
-        </Link>
+        <Wordmark />
         <span className="label">notes from the tabs</span>
       </header>
       {posts.length === 0 ? (
@@ -22,8 +21,9 @@ export default function BlogPage() {
             Add a post to <code>lib/posts.ts</code> and it shows up here. No redesign needed.
           </p>
           <Link className="button" href="/" style={{ justifySelf: "start" }}>
-            back home
-            <span className="button-arrow">↗</span>
+            <span className="button-fill" aria-hidden="true" />
+            <span className="button-text">back home</span>
+            <ArrowIcon className="button-arrow" />
           </Link>
         </section>
       ) : (

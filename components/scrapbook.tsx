@@ -16,6 +16,8 @@ export function Scrapbook() {
   );
   const [top, setTop] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const [dropped, setDropped] = useState<string | null>(null);
   const drag = useRef<{ id: string; dx: number; dy: number } | null>(null);
 
   const onPointerDown = (event: React.PointerEvent<HTMLElement>, id: string) => {
@@ -29,6 +31,7 @@ export function Scrapbook() {
       dy: ((event.clientY - box.top) / deskBox.height) * 100,
     };
     setTop(id);
+    setActive(id);
     setMoved(true);
     event.currentTarget.setPointerCapture(event.pointerId);
   };
@@ -47,7 +50,9 @@ export function Scrapbook() {
   };
 
   const endDrag = () => {
+    if (drag.current) setDropped(drag.current.id);
     drag.current = null;
+    setActive(null);
   };
 
   const reset = () => {
@@ -61,7 +66,9 @@ export function Scrapbook() {
         {cutouts.map((cut) => (
           <article
             key={cut.id}
-            className={`cutout cutout-${cut.kind}${top === cut.id ? " is-top" : ""}`}
+            className={`cutout cutout-${cut.kind}${top === cut.id ? " is-top" : ""}${active === cut.id ? " is-dragging" : ""}${dropped === cut.id ? " is-dropped" : ""}`}
+            data-cursor="drag"
+            onAnimationEnd={() => setDropped(null)}
             style={{
               left: `${pos[cut.id].x}%`,
               top: `${pos[cut.id].y}%`,
@@ -191,6 +198,7 @@ export function SignaturePad() {
           onPointerLeave={stop}
           onPointerCancel={stop}
           aria-label="Sign the guestbook"
+          data-cursor="sign"
         />
         {!signed && <span className="signature-placeholder hand">sign here ✎</span>}
         <span className="signature-rule" aria-hidden="true" />

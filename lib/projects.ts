@@ -7,6 +7,8 @@ export type Project = {
   built: string;
   tags: string[];
   href: string;
+  repo: string;
+  proof: { value: string; label: string };
 };
 
 export const projects: Project[] = [
@@ -19,6 +21,8 @@ export const projects: Project[] = [
     built: "A one-tap scoring console, offline queue, public no-login share link, fixtures, playoffs, and points tables.",
     tags: ["typescript", "websockets", "offline first"],
     href: "https://howzat.ramaa.tech",
+    repo: "https://github.com/whynotramaa/howzat",
+    proof: { value: "0 logins", label: "to follow a live match from the boundary" },
   },
   {
     number: "02",
@@ -29,6 +33,8 @@ export const projects: Project[] = [
     built: "Segments, WAL, inverted index, tokenizer, and BM25 ranking, all written in TypeScript.",
     tags: ["typescript", "bm25", "storage engine"],
     href: "https://shardly.ramaa.tech",
+    repo: "https://github.com/whynotramaa/shardly",
+    proof: { value: "6–21 ms", label: "indexed queries on 50k docs, vs ~800 ms naive" },
   },
   {
     number: "03",
@@ -39,6 +45,8 @@ export const projects: Project[] = [
     built: "A provider-agnostic coding agent with a read-only PLAN mode and permission gates.",
     tags: ["ink", "openai sdk", "node.js"],
     href: "https://papercode.ramaa.tech",
+    repo: "https://github.com/whynotramaa/papercode",
+    proof: { value: "153 tests", label: "vitest, around every tool and permission gate" },
   },
   {
     number: "04",
@@ -49,6 +57,8 @@ export const projects: Project[] = [
     built: "A visual builder for APIs, AI providers, notifications, and durable background jobs.",
     tags: ["next.js", "xyflow", "inngest"],
     href: "https://kairo-automation.vercel.app",
+    repo: "https://github.com/whynotramaa/kairo---automation",
+    proof: { value: "4 ai providers", label: "openai, anthropic, google and groq as flow nodes" },
   },
   {
     number: "05",
@@ -59,6 +69,8 @@ export const projects: Project[] = [
     built: "Guest-friendly rooms, four games, daily IPL puzzle, scores, and optional room voice.",
     tags: ["convex", "next.js", "webrtc"],
     href: "https://playwhatever.ramaa.tech",
+    repo: "https://github.com/whynotramaa/playwhatever",
+    proof: { value: "4 games", label: "live rooms, joined with a six-character code" },
   },
   {
     number: "06",
@@ -69,6 +81,8 @@ export const projects: Project[] = [
     built: "Personalized picks, debounced infinite search, trailer playback, and live trending data.",
     tags: ["react", "tmdb", "appwrite"],
     href: "https://github.com/whynotramaa/movie-recommendation",
+    repo: "https://github.com/whynotramaa/movie-recommendation",
+    proof: { value: "infinite", label: "scroll search, debounced so tmdb stays calm" },
   },
   {
     number: "07",
@@ -79,5 +93,7 @@ export const projects: Project[] = [
     built: "Frequency bands, per-location routing, DnCNN validation, ablations, and resumable checkpoints.",
     tags: ["pytorch", "cnn experts", "kaggle"],
     href: "https://github.com/whynotramaa/fcsg-capstone",
+    repo: "https://github.com/whynotramaa/fcsg-capstone",
+    proof: { value: "< 5M params", label: "validated against a published DnCNN baseline first" },
   },
 ];
