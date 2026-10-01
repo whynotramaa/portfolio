@@ -1,48 +1,65 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties, ReactNode } from "react";
-import { projects } from "@/lib/projects";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import { orbitStack, stackGroups } from "@/lib/stack";
 import Distance from "@/components/distance";
+import Work, { FlipWords } from "@/components/work";
+import { research } from "@/lib/projects";
+import { AsciiField } from "@/components/ascii";
+import { Runner } from "@/components/runner";
+import { Ink, doodles } from "@/components/sketches";
 import { Scrapbook, SignaturePad } from "@/components/scrapbook";
+import { FoomatoSketch } from "@/components/foomato";
 
 const EMAIL = "hire.ramaa@gmail.com";
 
 const v = (vars: Record<string, string | number>) => vars as CSSProperties;
 
-function ExternalLink({
-  href,
-  className,
-  children,
-  cursor,
-  magnetic,
-}: {
-  href: string;
-  className?: string;
-  children: ReactNode;
-  cursor?: string;
-  magnetic?: boolean;
-}) {
+function ExternalLink({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
   return (
-    <a
-      className={className}
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      data-cursor={cursor}
-      data-magnetic={magnetic ? "" : undefined}
-    >
+    <a className={className} href={href} target="_blank" rel="noreferrer">
       {children}
     </a>
+  );
+}
+
+const MANIFESTATION = "get a ≥ 1.25 lakh per month job";
+
+function Manifest() {
+  const [clicks, setClicks] = useState(0);
+  const bits = useMemo(
+    () =>
+      [...MANIFESTATION].map(() => ({
+        "--x": `${(Math.random() - 0.5) * 240}px`,
+        "--y": `${(Math.random() - 0.5) * 80}px`,
+        "--r": `${(Math.random() - 0.5) * 180}deg`,
+      })),
+    [],
+  );
+  return (
+    <>
+      <button className="manifest-btn" type="button" onClick={() => setClicks((c) => c + 1)}>
+        manifesting things{".".repeat(Math.min(clicks, 3))}
+      </button>
+      {clicks > 3 && (
+        <span className="manifestation" role="status">
+          {[...MANIFESTATION].map((ch, i) => (
+            <span key={i} className="mote" style={v({ ...bits[i], "--i": i })}>
+              {ch}
+            </span>
+          ))}
+        </span>
+      )}
+    </>
   );
 }
 
 export function ArrowIcon({ className = "" }: { className?: string }) {
   return (
     <svg className={`arrow-icon ${className}`} viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -50,19 +67,11 @@ export function ArrowIcon({ className = "" }: { className?: string }) {
 export function Wordmark({ href = "/" }: { href?: string }) {
   return (
     <Link className="wordmark" href={href}>
-      <span className="seal jp" aria-hidden="true" data-tip="rama, in katakana" data-tip-pos="bottom">
-        ラマ
+      <span className="wordmark-star" aria-hidden="true">
+        ✱
       </span>
       ramaa
     </Link>
-  );
-}
-
-function Arrow({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`ink-arrow ${className}`} viewBox="0 0 36 36" fill="none" aria-hidden="true">
-      <path d="M4 32C6 16 16 6 30 4M30 4l-9 2M30 4l3 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" pathLength={1} />
-    </svg>
   );
 }
 
@@ -72,7 +81,7 @@ function Wobble() {
       <path
         d="M2 9C14 3 24 13 36 8S58 3 70 8 94 14 106 8 128 3 140 8 164 13 176 8 192 5 198 7"
         stroke="currentColor"
-        strokeWidth="2.4"
+        strokeWidth="1.6"
         strokeLinecap="round"
         vectorEffect="non-scaling-stroke"
         pathLength={1}
@@ -81,333 +90,308 @@ function Wobble() {
   );
 }
 
-function Draggable({ className, children }: { className: string; children: ReactNode }) {
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const start = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
-  const end = () => {
-    start.current = null;
-    setDragging(false);
-  };
-
+function HandArrow() {
   return (
-    <aside
-      className={`${className} draggable${dragging ? " is-dragging" : ""}`}
-      data-cursor="drag"
-      style={{ translate: `${offset.x}px ${offset.y}px` }}
-      onPointerDown={(event) => {
-        start.current = { x: event.clientX, y: event.clientY, ox: offset.x, oy: offset.y };
-        setDragging(true);
-        event.currentTarget.setPointerCapture(event.pointerId);
-      }}
-      onPointerMove={(event) => {
-        const from = start.current;
-        if (from) setOffset({ x: from.ox + event.clientX - from.x, y: from.oy + event.clientY - from.y });
-      }}
-      onPointerUp={end}
-      onPointerCancel={end}
-    >
-      {children}
-    </aside>
-  );
-}
-
-function PencilRing({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`pencil-ring ${className}`} viewBox="0 0 200 80" preserveAspectRatio="none" fill="none" aria-hidden="true">
-      <path
-        d="M172 12C128 0 44 4 16 26-6 44 34 74 104 75c70 1 100-24 82-50-10-14-38-19-70-17"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
-        pathLength={1}
-      />
+    <svg className="hand-arrow" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <path d="M4 32C6 16 16 6 30 4M30 4l-9 2M30 4l3 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" pathLength={1} />
     </svg>
   );
 }
 
 function SunIcon() {
   return (
-    <svg className="theme-glyph" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <circle cx="10" cy="10" r="3.6" stroke="currentColor" strokeWidth="1.5" />
-      <g stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-        <path d="M10 1.4v2.2M10 16.4v2.2M18.6 10h-2.2M3.6 10H1.4M16.08 3.92l-1.56 1.56M5.48 14.52l-1.56 1.56M16.08 16.08l-1.56-1.56M5.48 5.48L3.92 3.92" />
-      </g>
+    <svg className="glyph" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.4" stroke="currentColor" strokeWidth="1.4" />
+      <path
+        d="M10 1.8v2M10 16.2v2M18.2 10h-2M3.8 10h-2M15.8 4.2l-1.4 1.4M5.6 14.4l-1.4 1.4M15.8 15.8l-1.4-1.4M5.6 5.6 4.2 4.2"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
 
 function MoonIcon() {
   return (
-    <svg className="theme-glyph" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      <path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    <svg className="glyph" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M16.5 12.4A7 7 0 0 1 7.6 3.5a7 7 0 1 0 8.9 8.9Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
     </svg>
+  );
+}
+
+export function ThemeToggle() {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => setDark(document.documentElement.dataset.theme === "dark"), []);
+
+  const toggle = (event: MouseEvent<HTMLButtonElement>) => {
+    const next = dark ? "light" : "dark";
+    const root = document.documentElement;
+    const apply = () => {
+      root.dataset.theme = next;
+      setDark(!dark);
+    };
+    window.localStorage.setItem("ramaa-theme", next);
+    root.style.setProperty("--vt-x", `${event.clientX}px`);
+    root.style.setProperty("--vt-y", `${event.clientY}px`);
+    const transition = document.startViewTransition?.bind(document);
+    if (!transition || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return apply();
+    transition(apply);
+  };
+
+  return (
+    <button
+      className="icon-button"
+      type="button"
+      onClick={toggle}
+      aria-label={`switch to ${dark ? "light" : "dark"} mode`}
+      data-tip={dark ? "lights on" : "lights off"}
+    >
+      {dark ? <MoonIcon /> : <SunIcon />}
+    </button>
   );
 }
 
 function GlassesIcon() {
   return (
-    <svg className="glasses" viewBox="0 0 26 14" fill="none" aria-hidden="true">
-      <circle cx="6" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.4" />
-      <circle cx="20" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.4" />
-      <path className="draw" d="M10.4 7c1-1 4.2-1 5.2 0M1.6 5.4 0.6 4M24.4 5.4l1-1.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    <svg className="glyph glyph-wide" viewBox="0 0 26 14" fill="none" aria-hidden="true">
+      <circle cx="6" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.3" />
+      <circle cx="20" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M10.4 7c1-1 4.2-1 5.2 0M1.6 5.4 0.6 4M24.4 5.4l1-1.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
     </svg>
   );
 }
 
-function RollLink({ href, children }: { href: string; children: string }) {
-  return (
-    <Link className="roll" href={href} data-text={children}>
-      <span>{children}</span>
-    </Link>
-  );
-}
-
-const blossoms = [
-  [560, 34, 1.1],
-  [520, 58, 0.8],
-  [470, 118, 1],
-  [455, 168, 1.25],
-  [420, 106, 0.7],
-  [380, 142, 0.9],
-  [338, 98, 1.05],
-  [300, 86, 0.75],
-  [272, 250, 1.15],
-  [252, 178, 0.85],
-  [160, 206, 1],
-  [116, 176, 0.8],
-  [88, 262, 1.2],
+const banter = [
+  ["ok ok, I heard you", "still hiring me?"],
+  ["that's four clicks", "I call that commitment"],
+  ["hr has entered", "the chat"],
+  ["salary?", "negotiable. pasta isn't"],
+  ["fine.", "start monday?"],
 ];
 
-function Branch() {
+function BestJokes() {
+  const [clicks, setClicks] = useState(0);
+  const said = clicks >= 4 ? "// not funny, as per peehu" : clicks === 3 ? "// fine, not best jokes" : "";
+
   return (
-    <svg className="branch" viewBox="0 0 600 320" fill="none" aria-hidden="true">
-      <defs>
-        <symbol id="sakura" viewBox="-14 -14 28 28" overflow="visible">
-          {[0, 72, 144, 216, 288].map((angle) => (
-            <path
-              key={angle}
-              className="sakura-petal"
-              transform={`rotate(${angle})`}
-              d="M0 0C-5.5-3-6.8-9.5-2.4-12.6L0-10.4 2.4-12.6C6.8-9.5 5.5-3 0 0Z"
-            />
-          ))}
-          <circle className="sakura-heart" r="1.8" />
-        </symbol>
-      </defs>
-      <g className="branch-sway">
-        <path className="twig twig-main" pathLength={1} d="M620 26C540 36 480 64 424 108S330 170 250 180 140 212 88 262" />
-        <path className="twig" pathLength={1} d="M472 72C484 110 472 142 455 168" />
-        <path className="twig" pathLength={1} d="M382 140C362 112 340 96 300 86" />
-        <path className="twig" pathLength={1} d="M300 172C302 206 292 232 272 250" />
-        <path className="twig" pathLength={1} d="M184 200C164 182 142 176 116 176" />
-        {blossoms.map(([x, y, s], i) => (
-          <g key={i} transform={`translate(${x} ${y}) scale(${s})`}>
-            <use className="bloom" href="#sakura" x="-14" y="-14" width="28" height="28" style={v({ "--i": i })} />
-          </g>
-        ))}
-      </g>
-    </svg>
+    <>
+      <button type="button" className={`circled best-jokes${said ? " is-struck" : ""}`} onClick={() => setClicks((n) => n + 1)}>
+        <span className="jokes-best">best</span> jokes
+        <Wobble />
+        {!said && (
+          <span className="jokes-q" aria-hidden="true">
+            ?
+          </span>
+        )}
+      </button>
+      .
+      <span key={said} className="jokes-said" aria-live="polite">
+        {said}
+      </span>
+    </>
   );
 }
 
-const petals = Array.from({ length: 16 }, (_, i) => ({
-  x: `${(i * 37 + 11) % 100}%`,
-  s: 0.6 + ((i * 7) % 5) / 6,
-  dur: `${12 + ((i * 5) % 9)}s`,
-  delay: `${-((i * 13) % 19)}s`,
-  sw: `${2.4 + ((i * 3) % 4) * 0.7}s`,
-}));
+function HireStamp() {
+  const [clicks, setClicks] = useState(0);
+  const stage = clicks % (banter.length + 3);
+  const line = stage >= 3 ? banter[stage - 3] : null;
+  const motion = clicks === 0 ? "" : stage === 1 || stage === 2 ? " is-thunk" : " is-flip";
 
-function Petals() {
   return (
-    <div className="petals" aria-hidden="true">
-      {petals.map((p, i) => (
-        <span key={i} className="petal" style={v({ "--x": p.x, "--s": p.s, "--dur": p.dur, "--delay": p.delay, "--sw": p.sw })}>
-          <i />
-        </span>
-      ))}
+    <button type="button" className="hire-stamp" onClick={() => setClicks((n) => n + 1)} aria-live="polite">
+      <span key={clicks} className={`hire-ink${motion}${line ? " is-back" : ""}`}>
+        {line ? line[0] : "looking for a job"}
+        <strong>{line ? line[1] : "class of 2027"}</strong>
+      </span>
+    </button>
+  );
+}
+
+function Clock({ time }: { time: string }) {
+  const [h, m] = time.split(":");
+  return (
+    <span className="clock">
+      {h}
+      <span className="blink">:</span>
+      {m}
+    </span>
+  );
+}
+
+const excuses = ["instead of studying", "at 3am, mostly", "between cricket matches", "instead of sleeping", "for the plot"];
+
+const groupHue = [250, 150, 25];
+
+const facts = [
+  { doodle: "drawer", value: "7", label: "things in this drawer", h: 85 },
+  { doodle: "cap", value: "2027", label: "graduating from NIT Rourkela", h: 250 },
+  { doodle: "stamps", value: "2", label: "countries stood in", h: 25 },
+  { doodle: "open", value: "open", label: "to work and good problems", h: 150 },
+];
+
+const GLYPHS = "!<>-_/[]{}=+*^?#";
+
+function useScrambleOnHover() {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const busy = new WeakSet<Element>();
+    const over = (event: PointerEvent) => {
+      const el = (event.target as Element | null)?.closest?.("[data-scramble]");
+      if (!el || busy.has(el) || (event.relatedTarget instanceof Node && el.contains(event.relatedTarget))) return;
+      const node = [...el.childNodes].find((n): n is Text => n.nodeType === 3 && !!n.textContent?.trim());
+      if (!node) return;
+      const text = node.textContent ?? "";
+      busy.add(el);
+      let frame = 0;
+      const timer = window.setInterval(() => {
+        const done = ++frame / 1.4;
+        node.textContent = [...text]
+          .map((ch, i) => (ch === " " || i < done ? ch : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
+          .join("");
+        if (done < text.length) return;
+        window.clearInterval(timer);
+        node.textContent = text;
+        busy.delete(el);
+      }, 28);
+    };
+    document.addEventListener("pointerover", over);
+    return () => document.removeEventListener("pointerover", over);
+  }, []);
+}
+
+const status: [string, number, string, number][] = [
+  ["jokes", 10, "best", 150],
+  ["pasta", 1, "worst", 25],
+  ["cricket", 9, "every weekend", 85],
+  ["sleep", 3, "negotiable", 250],
+  ["shipping", 8, "7 things", 300],
+];
+
+function InkStatus() {
+  return (
+    <div className="status-card inked reveal" style={v({ "--h": 195 })}>
+      <p className="status-prompt">
+        <span className="label">~/ramaa $ status --honest</span>
+        <span className="hand status-aside">self reported</span>
+      </p>
+      <ul className="status-list">
+        {status.map(([name, n, value, h]) => (
+          <li key={name} className="status-row" style={v({ "--h": h })}>
+            <span className="hand status-name">{name}</span>
+            <svg className="status-bar" viewBox="0 0 200 22" preserveAspectRatio="none" role="img" aria-label={`${n} out of 10`}>
+              <g filter="url(#ink-edge)">
+                <path className="status-fill" d={`M3 4H${3 + n * 19.4}V18H4Z`} />
+                <path className="status-track" d="M3 4 197 3 196 18 4 18Z" />
+              </g>
+            </svg>
+            <span className="label status-value">{value}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-const ascii = String.raw`                                                           .--.
-       *  *   * *  *                                      (    )
-    * *  ** * * **  * *                                    '--'
-   *  ** *\ * /* ** * *                   __/\__                          ______________
-    * *  \ \|/ /  * *                  __/ /\/\ \__                       \____________/
-      *   \_|_/  *   *               _/  /      \  \_                       |   ||   |
-       *    |      *               _/                \_                    _|________|_
-            |                    _/                    \_                   |        |
-            |                  _/                        \_                 |        |
-___________/|\______________________________________________________________________________
-  ~   ~~    ~   ~~~   ~    ~~   ~   ~~~    ~   ~~   ~    ~~~   ~   ~~    ~   ~~~   ~    ~~
-~~   ~    ~~~   ~   ~~    ~   ~~~    ~   ~~    ~   ~~~   ~    ~~   ~   ~~~   ~    ~~   ~   ~
-                    ,                                             *
-                                            *                                      ,`;
+const W = 46;
+const STEPS = 38;
 
-function AsciiScene() {
-  let bloom = 0;
+function cricketFrame(t: number) {
+  const grid = Array.from({ length: 5 }, () => Array<string>(W).fill(" "));
+  const put = (row: number, col: number, text: string) =>
+    [...text].forEach((ch, i) => {
+      if (ch !== " " && row >= 0 && row < 5 && col + i >= 0 && col + i < W) grid[row][col + i] = ch;
+    });
+  const hit = t >= 16;
+  put(2, 0, "|||");
+  put(3, 0, "|||");
+  if (hit && t >= 19) {
+    put(1, 4, "\\o/");
+    put(2, 5, "|");
+    put(3, 4, "/ \\");
+  } else {
+    put(1, 5, "o");
+    put(2, 4, hit ? "/|\\_" : "/|\\");
+    put(3, 4, "/ \\");
+    if (!hit) put(2, 7, "\\");
+  }
+  put(1, 42, t < 4 ? "o/" : "o");
+  put(2, 41, t < 4 ? "/|" : "/|\\");
+  put(3, 41, "/ \\");
+  if (!hit) put(2, 38 - t * 2, "•");
+  else {
+    const k = t - 16;
+    put(2 - Math.floor(k / 2), 10 + k * 3, "•");
+  }
+  if (t >= 24 && t % 4 < 3) put(0, 20, "SIX!");
+  put(4, 0, "._.-".repeat(W / 4 + 1).slice(0, W));
+  return grid.map((row) => row.join("")).join("\n");
+}
+
+function AsciiCricket() {
+  const [t, setT] = useState(30);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = window.setInterval(() => setT((step) => (step + 1) % STEPS), 110);
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
-    <pre className="ascii" role="img" aria-label="ascii drawing of a cherry tree, mount fuji and a torii gate by the water">
-      {ascii.split("\n").map((line, row) => (
-        <span key={row} className="ascii-line">
-          {line.split(/(\*)/).map((chunk, index) =>
-            chunk === "*" ? (
-              <span key={index} className="b" style={v({ "--i": bloom++ })}>
-                *
-              </span>
-            ) : (
-              chunk
-            ),
-          )}
-          {"\n"}
-        </span>
-      ))}
+    <pre className="ascii" role="img" aria-label="ascii animation of a batter hitting a six">
+      {cricketFrame(t)}
     </pre>
   );
 }
 
-function Cursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const [label, setLabel] = useState("");
-
-  useEffect(() => {
-    const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring || !window.matchMedia("(pointer: fine)").matches) return;
-    const root = document.documentElement;
-    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    root.classList.add("has-cursor");
-
-    let x = -100;
-    let y = -100;
-    let rx = x;
-    let ry = y;
-    let frame = 0;
-
-    const move = (event: PointerEvent) => {
-      x = event.clientX;
-      y = event.clientY;
-      dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      root.classList.add("cursor-on");
-    };
-    const over = (event: PointerEvent) => {
-      const target = (event.target as Element).closest<HTMLElement>("[data-cursor], a, button, canvas");
-      ring.dataset.state = target ? (target.dataset.cursor ? "label" : "link") : "";
-      setLabel(target?.dataset.cursor ?? "");
-    };
-    const burst = (event: PointerEvent) => {
-      if (calm || (event.target as Element).closest("canvas, .cutout, .draggable")) return;
-      for (let i = 0; i < 7; i++) {
-        const petal = document.createElement("i");
-        petal.className = "burst";
-        petal.style.left = `${event.clientX}px`;
-        petal.style.top = `${event.clientY}px`;
-        document.body.appendChild(petal);
-        const angle = (Math.PI * 2 * i) / 7 + Math.random() * 0.5;
-        const reach = 36 + Math.random() * 46;
-        petal.animate(
-          [
-            { transform: "translate(-50%, -50%) scale(0) rotate(0deg)", opacity: 1 },
-            {
-              transform: `translate(calc(-50% + ${Math.cos(angle) * reach}px), calc(-50% + ${Math.sin(angle) * reach + 34}px)) scale(1) rotate(${200 + Math.random() * 260}deg)`,
-              opacity: 0,
-            },
-          ],
-          { duration: 1000 + Math.random() * 500, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
-        ).onfinish = () => petal.remove();
-      }
-    };
-    const down = (event: PointerEvent) => {
-      root.classList.add("cursor-down");
-      burst(event);
-    };
-    const up = () => root.classList.remove("cursor-down");
-    const leave = () => root.classList.remove("cursor-on");
-    const tick = () => {
-      rx += (x - rx) * 0.16;
-      ry += (y - ry) * 0.16;
-      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
-      frame = requestAnimationFrame(tick);
-    };
-    tick();
-
-    const magnets = Array.from(document.querySelectorAll<HTMLElement>("[data-magnetic]"));
-    const pull = (event: PointerEvent) => {
-      const el = event.currentTarget as HTMLElement;
-      const box = el.getBoundingClientRect();
-      const dx = event.clientX - (box.left + box.width / 2);
-      const dy = event.clientY - (box.top + box.height / 2);
-      el.style.transform = `translate(${dx * 0.25}px, ${dy * 0.35}px)`;
-    };
-    const release = (event: PointerEvent) => {
-      (event.currentTarget as HTMLElement).style.transform = "";
-    };
-    magnets.forEach((el) => {
-      el.addEventListener("pointermove", pull);
-      el.addEventListener("pointerleave", release);
-    });
-
-    window.addEventListener("pointermove", move);
-    document.addEventListener("pointerover", over);
-    window.addEventListener("pointerdown", down);
-    window.addEventListener("pointerup", up);
-    root.addEventListener("pointerleave", leave);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      root.classList.remove("has-cursor", "cursor-on", "cursor-down");
-      magnets.forEach((el) => {
-        el.removeEventListener("pointermove", pull);
-        el.removeEventListener("pointerleave", release);
-      });
-      window.removeEventListener("pointermove", move);
-      document.removeEventListener("pointerover", over);
-      window.removeEventListener("pointerdown", down);
-      window.removeEventListener("pointerup", up);
-      root.removeEventListener("pointerleave", leave);
-    };
-  }, []);
-
+function ExperienceCard() {
   return (
-    <>
-      <div ref={ringRef} className="cursor-ring" aria-hidden="true">
-        <span className="cursor-label">{label}</span>
-      </div>
-      <div ref={dotRef} className="cursor-dot" aria-hidden="true" />
-    </>
+    <ul className="work">
+      <li className="proj exp inked redraw" style={v({ "--h": 25 })}>
+        <div className="proj-art">
+          <FoomatoSketch />
+        </div>
+        <div className="proj-body">
+          <p className="label proj-meta">ml intern · may to jul 2026 · nepal</p>
+          <h3>
+            <Link href="/experience/foomato">Foomato</Link>
+          </h3>
+          <p className="hand proj-hook">taught 200K old orders to set the table and read the clock.</p>
+          <div className="proj-foot exp-foot">
+            <p className="label proj-tags">feed ranker · eta model</p>
+            <span className="ink-link exp-go">
+              read the case file <ArrowIcon />
+            </span>
+          </div>
+        </div>
+      </li>
+    </ul>
   );
 }
 
-function FillText({ text }: { text: string }) {
+function SectionHead({ no, caption, title, note }: { no: string; caption: ReactNode; title: ReactNode; note: ReactNode }) {
   return (
-    <>
-      {text.split(" ").map((word, index) => (
-        <span key={index} className="fill-word">
-          {word}{" "}
-        </span>
-      ))}
-    </>
+    <header className="section-head reveal">
+      <span className="label">
+        <span className="section-no">{no}</span> {caption}
+      </span>
+      <h2>{title}</h2>
+      <p className="hand head-note">{note}</p>
+    </header>
   );
 }
 
 export default function PortfolioShell() {
-  const [dark, setDark] = useState(false);
   const [nerdMode, setNerdMode] = useState(false);
   const [time, setTime] = useState("--:--");
   const [copied, setCopied] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const pageRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLElement>(null);
+  useScrambleOnHover();
 
   useEffect(() => {
-    const storedTheme = window.localStorage.getItem("ramaa-theme");
-    const initialDark = storedTheme === "dark" || (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    setDark(initialDark);
-    document.documentElement.dataset.theme = initialDark ? "dark" : "light";
-
     const clock = () => {
       setTime(
         new Intl.DateTimeFormat("en-IN", {
@@ -419,58 +403,8 @@ export default function PortfolioShell() {
       );
     };
     clock();
-    const clockTimer = window.setInterval(clock, 20000);
-
-    let lastY = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      headerRef.current?.classList.toggle("is-scrolled", y > 40);
-      headerRef.current?.classList.toggle("is-hidden", y > 480 && y > lastY);
-      lastY = y;
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          revealObserver.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -60px" },
-    );
-    pageRef.current?.querySelectorAll(".reveal").forEach((element) => revealObserver.observe(element));
-
-    const counter = pageRef.current?.querySelector<HTMLElement>("[data-count]");
-    let countObserver: IntersectionObserver | null = null;
-    if (counter) {
-      countObserver = new IntersectionObserver(
-        (entries) => {
-          if (!entries[0].isIntersecting) return;
-          const target = Number(counter.dataset.count);
-          const start = performance.now();
-          counter.textContent = "0";
-          const tick = (now: number) => {
-            const progress = Math.min((now - start) / 1100, 1);
-            counter.textContent = String(Math.round((1 - (1 - progress) ** 3) * target));
-            if (progress < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-          countObserver?.disconnect();
-        },
-        { threshold: 1 },
-      );
-      countObserver.observe(counter);
-    }
-
-    return () => {
-      window.clearInterval(clockTimer);
-      window.removeEventListener("scroll", onScroll);
-      revealObserver.disconnect();
-      countObserver?.disconnect();
-    };
+    const timer = window.setInterval(clock, 20000);
+    return () => window.clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -482,13 +416,6 @@ export default function PortfolioShell() {
       });
   }, [nerdMode]);
 
-  const toggleTheme = () => {
-    const nextDark = !dark;
-    setDark(nextDark);
-    document.documentElement.dataset.theme = nextDark ? "dark" : "light";
-    window.localStorage.setItem("ramaa-theme", nextDark ? "dark" : "light");
-  };
-
   const copyEmail = () => {
     navigator.clipboard?.writeText(EMAIL).then(() => {
       setCopied(true);
@@ -498,171 +425,141 @@ export default function PortfolioShell() {
 
   return (
     <div ref={pageRef} className={nerdMode ? "nerd-mode" : undefined}>
-      <div className="intro" aria-hidden="true">
-        <span className="intro-seal jp">ラマー</span>
-        <span className="intro-line label">portfolio, 2026</span>
+      <svg className="ink-defs" aria-hidden="true">
+        <filter id="ink-edge">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves={2} seed={3} />
+          <feDisplacementMap in="SourceGraphic" scale={3} />
+        </filter>
+      </svg>
+      <div className="loader" aria-hidden="true">
+        <span className="loader-spin" />
+        <span>ramaa</span>
+        <span className="faint">warming up the jokes</span>
       </div>
-      <Cursor />
-      <div className="progress" aria-hidden="true" />
-      <div className="grain" aria-hidden="true" />
 
-      <header className="site-header" ref={headerRef}>
+      <header className="site-header">
         <Wordmark href="#top" />
-        <nav className="desktop-nav" aria-label="Primary">
-          <RollLink href="#work">work</RollLink>
-          <RollLink href="#world">my world</RollLink>
-          <RollLink href="#stack">stack</RollLink>
-          <RollLink href="/blog">notes</RollLink>
-          <RollLink href="#contact">contact</RollLink>
-        </nav>
         <div className="header-tools">
           <span className="label header-clock">
-            <span className="clock" key={time}>
-              {time}
-            </span>{" "}
-            ist
+            <Clock time={time} /> ist
           </span>
           <button
             className="icon-button"
             type="button"
-            onClick={toggleTheme}
-            aria-label={`switch to ${dark ? "light" : "dark"} mode`}
-          >
-            {dark ? <MoonIcon /> : <SunIcon />}
-          </button>
-          <button
-            className="nerd-toggle"
-            type="button"
             aria-pressed={nerdMode}
             onClick={() => setNerdMode((enabled) => !enabled)}
+            aria-label="nerd mode"
+            data-tip={nerdMode ? "nerd mode: on" : "nerd mode"}
           >
             <GlassesIcon />
-            <span className="nerd-label">nerd mode</span>
           </button>
+          <ThemeToggle />
         </div>
       </header>
 
-      <nav className="mobile-nav" aria-label="Mobile">
-        <Link href="#work">work</Link>
-        <Link href="#world">world</Link>
-        <Link href="#stack">stack</Link>
-        <Link href="#contact">say hi</Link>
-      </nav>
 
-      <main>
+      <main className="shell">
         <section className="hero" id="top">
-          <Branch />
-          <Petals />
-          <p className="hero-vertical jp" aria-hidden="true" data-tip="craftsmanship, and sometimes jokes" data-tip-pos="left">
-            ものづくり、ときどき冗談。
+          <AsciiField />
+          <div className="hero-top">
+            <span className="label">
+              portfolio · vol. 26
+              <span className="nerd-comment">hero: 5 letters, 60ms stagger, zero images</span>
+            </span>
+          </div>
+
+          <div className="hero-name">
+            <h1 className="hero-title" aria-label="ramaa">
+              {"ramaa".split("").map((letter, index) => (
+                <span
+                  key={index}
+                  className={letter === "m" ? "char char-m" : "char"}
+                  aria-hidden="true"
+                  style={v({ "--i": index })}
+                  onClick={letter === "m" ? () => setPlaying(true) : undefined}
+                >
+                  {letter}
+                </span>
+              ))}
+            </h1>
+            <HireStamp />
+            <Runner open={playing} onClose={() => setPlaying(false)} />
+          </div>
+          <p className="hand hero-aka">
+            <HandArrow />
+            or formally, ramnath
+          </p>
+          <p className="hero-line">
+            I make worst pasta
+            <span className="emo sticker-pasta" aria-hidden="true">
+              🍝
+            </span>{" "}
+            and{" "}
+            <BestJokes />
+          </p>
+          <p className="hero-blurb">
+            Products, interfaces, little experiments, failed companies, sports, and occasionally things that are
+            difficult to explain without opening a laptop.
+          somehow, also interned at a food delivery company based out of Nepal, Foomato. built recommendation engine and ETA prediction.
           </p>
 
-          <div className="hero-inner shell">
-            <div className="hero-top">
-              <span className="status">
-                <span className="pulse-dot" aria-hidden="true" />
-                <span className="label">looking for a job, class of 2027</span>
+          <dl className="hero-meta inked" style={v({ "--h": 85 })}>
+            <div>
+              <dt className="hand">currently at</dt>
+              <dd>NIT Rourkela</dd>
+              <dd className="label">b.tech cse, final year</dd>
+            </div>
+            <div>
+              <dt className="hand">graduating</dt>
+              <dd>2027</dd>
+              <dd className="label">hireable before then</dd>
+            </div>
+            <div>
+              <dt className="hand">my clock</dt>
+              <dd>
+                <Clock time={time} />
+              </dd>
+              <dd className="label">ist, rourkela</dd>
+            </div>
+          </dl>
+
+          <div className="hero-actions">
+            <a className="button" href={`mailto:${EMAIL}`}>
+              <span className="emo wave" aria-hidden="true">
+                👋
               </span>
-              <span className="label">
-                portfolio · vol. 26
-                <span className="nerd-comment">hero: 5 letters, 70ms stagger, one svg branch</span>
-              </span>
-            </div>
+              say hello
+              <ArrowIcon />
+            </a>
+            <ExternalLink className="button button-ghost" href="https://github.com/whynotramaa">
+              github.com/whynotramaa
+            </ExternalLink>
+            <span className="hand hero-aside">I really do reply</span>
+          </div>
 
-            <div className="hero-title-wrap">
-              <h1 className="hero-title" aria-label="ramaa">
-                {"ramaa".split("").map((letter, index) => (
-                  <span key={index} className="char" aria-hidden="true" style={v({ "--i": index })}>
-                    <span className="char-in">{letter}</span>
-                  </span>
-                ))}
-              </h1>
-              <p className="hero-aka hand">
-                <Arrow className="arrow-aka" />
-                or formally, ramnath
-              </p>
-            </div>
-
-            <div className="hero-grid">
-              <p className="hero-line">
-                I make worst pasta and{" "}
-                <span className="circled">
-                  best jokes
-                  <Wobble />
-                </span>
-                .
-              </p>
-              <div className="hero-side">
-                <p className="hero-blurb">
-                  Products, interfaces, little experiments, failed companies, sports, and occasionally things that are
-                  difficult to explain without opening a laptop.
-                </p>
-                <dl className="hero-meta">
-                  <div>
-                    <dt>currently</dt>
-                    <dd>NIT Rourkela, B.Tech CSE</dd>
-                  </div>
-                  <div>
-                    <dt>graduating</dt>
-                    <dd>2027</dd>
-                  </div>
-                  <div>
-                    <dt>my clock</dt>
-                    <dd>
-                      <span className="clock" key={time}>
-                        {time}
-                      </span>{" "}
-                      IST
-                    </dd>
-                  </div>
-                </dl>
-                <div className="hero-actions">
-                  <a className="button" href={`mailto:${EMAIL}`} data-magnetic="">
-                    <span className="button-fill" aria-hidden="true" />
-                    <span className="button-text">say hello</span>
-                    <ArrowIcon className="button-arrow" />
-                  </a>
-                  <ExternalLink className="text-link" href="https://github.com/whynotramaa">
-                    github.com/whynotramaa
-                  </ExternalLink>
-                  <span className="hand hero-aside">I really do reply</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="hero-foot">
-              <div className="orbit-row">
-                <span className="label">current orbit</span>
-                <ul className="orbit-icons">
-                  {orbitStack.map((item, index) => (
-                    <li key={item.name} className="orbit-icon" tabIndex={0} style={v({ "--i": index })}>
-                      <img src={item.icon} alt="" width={16} height={16} loading="lazy" />
-                      <span className="tip" role="tooltip">
-                        {item.name}
-                      </span>
-                    </li>
-                  ))}
-                  <li className="orbit-icon orbit-more" tabIndex={0}>
-                    +
-                    <span className="tip" role="tooltip">
-                      more &amp; more
-                    </span>
-                  </li>
-                </ul>
-              </div>
-              <a className="scroll-cue label" href="#about">
-                scroll
-                <span className="scroll-line" aria-hidden="true" />
-              </a>
-            </div>
+          <div className="orbit">
+            <span className="label">current orbit</span>
+            <ul className="orbit-icons">
+              {orbitStack.map((item, index) => (
+                <li
+                  key={item.name}
+                  className="orbit-icon"
+                  tabIndex={0}
+                  data-tip={item.name}
+                  style={v({ "--i": index, "--icon": `url(${item.icon})` })}
+                />
+              ))}
+              <li className="orbit-icon orbit-more" tabIndex={0} data-tip="more & more">
+                +
+              </li>
+            </ul>
           </div>
         </section>
 
-        <section className="block shell" id="about">
+        <section className="block" id="about">
           <SectionHead
             no="01"
-            kanji="私"
-            caption="the person behind the tabs"
+            caption="the person holding the pen"
             title={
               <>
                 small team energy, <em>one person</em>
@@ -670,58 +567,74 @@ export default function PortfolioShell() {
             }
             note="no boring bio here"
           />
-          <div className="about">
-            <p className="lede">
-              <FillText text="I like making useful things feel obvious. Sometimes that means a quiet interface. Sometimes it means teaching a tiny search engine how to explain its own decisions." />
-            </p>
-            <div className="about-grid reveal">
-              <p className="about-sub">
-                Final year B.Tech CSE at NIT Rourkela, India. Graduating 2027, and looking for a job before then.
-              </p>
-              <Draggable className="note-card">
-                <span className="note-pin" aria-hidden="true" />
-                <p className="hand note-title">into these lately</p>
-                <ul>
-                  <li>llm and harness engineering to optimize tokens</li>
-                  <li>go-lang for backend</li>
-                  <li>research on image restoration using fcsg-net</li>
-                </ul>
-              </Draggable>
-            </div>
-            <div className="facts reveal">
-              <div className="fact">
-                <strong data-count="7">7</strong>
-                <span className="label">things in this drawer</span>
-              </div>
-              <div className="fact">
-                <strong>2027</strong>
-                <span className="label">graduating from NIT Rourkela</span>
-              </div>
-              <div className="fact">
-                <strong>2</strong>
-                <span className="label">countries stood in</span>
-              </div>
-              <div className="fact">
-                <strong className="fact-word">open</strong>
-                <span className="label">to work and good problems</span>
-              </div>
+          <p className="lede reveal">
+            I like making useful things feel obvious. Sometimes that means a quiet interface. Sometimes it means teaching a
+            tiny search engine how to explain its own decisions.
+          </p>
+          <p className="about-sub reveal">
+            Final year B.Tech CSE at NIT Rourkela, India. Graduating 2027, and looking for a job before then.
+          </p>
+          <div className="about-grid">
+            <InkStatus />
+            <div className="note-card inked">
+              <p className="hand note-title">into these lately</p>
+              <ul>
+                <li>llm and harness engineering to optimize tokens</li>
+                <li>go-lang for backend</li>
+                <li>research on image restoration using fcsg-net</li>
+                <li>learning about the memory layer for agents</li>
+                <li>trying to build a personal agentic bot system, like muse</li>
+                <li>daydreaming about swapping netflix ads per user and per series, all realtime</li>
+              </ul>
             </div>
           </div>
+          <dl className="facts">
+            {facts.map((fact) => (
+              <div key={fact.doodle} className="fact inked redraw reveal" style={v({ "--h": fact.h })}>
+                <Ink d={doodles[fact.doodle]} id={`ink-${fact.doodle}`} className="fact-art" />
+                <dt>{fact.value}</dt>
+                <dd>{fact.label}</dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
-        <section className="block shell" id="work">
+        <section className="block" id="experience">
           <SectionHead
             no="02"
-            kanji="作品"
             caption={
               <>
-                selected work
-                <span className="nerd-comment">every row shows its proof up front, hover only nudges</span>
+                where someone paid me to think
+                <span className="nerd-comment">one card, one route, a whole case file behind it</span>
               </>
             }
             title={
               <>
-                things I built <em>instead of studying</em>
+                one internship, <em>two models</em>
+              </>
+            }
+            note={
+              <>
+                real users, real momo<span className="x-out">s</span>
+              </>
+            }
+          />
+          <ExperienceCard />
+        </section>
+
+        <section className="block" id="work">
+          <SectionHead
+            no="03"
+            caption={
+              <>
+                selected work
+                <span className="nerd-comment">card grid, hover replays the ink and boils the turbulence</span>
+              </>
+            }
+            title={
+              <>
+                things I built{" "}
+                <FlipWords words={excuses} />
               </>
             }
             note="the good drawer"
@@ -729,10 +642,23 @@ export default function PortfolioShell() {
           <Work />
         </section>
 
-        <section className="block shell" id="stack">
+        <section className="block" id="research">
           <SectionHead
-            no="03"
-            kanji="道具"
+            no="04"
+            caption="ongoing research"
+            title={
+              <>
+                poking at <em>machine learning</em>
+              </>
+            }
+            note="still training"
+          />
+          <Work items={research} />
+        </section>
+
+        <section className="block" id="stack">
+          <SectionHead
+            no="05"
             caption="the current toolbox"
             title={
               <>
@@ -741,39 +667,40 @@ export default function PortfolioShell() {
             }
             note="plus 43 open tabs"
           />
-          <div className="stack reveal">
-            {stackGroups.map((group, groupIndex) => (
-              <div className="stack-card" key={group.label}>
-                <div className="stack-head">
-                  <span className="section-no">0{groupIndex + 1}</span>
-                  <span className="stack-kanji jp" aria-hidden="true" data-tip={group.meaning}>
-                    {group.kanji}
-                  </span>
+          <div className="recipe inked reveal">
+            <div className="recipe-top">
+              <span className="label">recipe no. 26</span>
+              <span className="hand recipe-serves">serves one working product</span>
+            </div>
+            {stackGroups.map((group, g) => (
+              <div className="recipe-group" key={group.label} style={v({ "--h": groupHue[g] })}>
+                <div className="recipe-head">
+                  <h3 className="hand recipe-title">{group.title}</h3>
+                  <span className="label">{group.label}</span>
                 </div>
-                <h3 className="stack-title">{group.label}</h3>
-                <ul className="stack-list">
-                  {group.items.map((item, index) => (
+                <ul className="recipe-list">
+                  {group.items.map((item) => (
                     <li
                       key={item.name}
-                      className="stack-item"
-                      style={v({ "--i": index, "--icon": `url(${item.icon})`, ...(item.color ? { "--brand": item.color } : {}) })}
+                      className="recipe-item"
+                      style={v({ "--icon": `url(${item.icon})`, ...(item.color ? { "--brand": item.color } : {}) })}
                     >
                       <span className="stack-icon" aria-hidden="true" />
-                      <span className="stack-name">{item.name}</span>
-                      <span className="stack-mark" aria-hidden="true" />
+                      <span className="recipe-name">{item.name}</span>
+                      <span className="recipe-dots" aria-hidden="true" />
+                      <span className="hand recipe-qty">{item.note}</span>
                     </li>
                   ))}
                 </ul>
-                <span className="label stack-count">{group.items.length} tools</span>
               </div>
             ))}
+            <p className="hand recipe-method">method: stir until it ships, serve warm.</p>
           </div>
         </section>
 
-        <section className="block shell" id="world">
+        <section className="block" id="world">
           <SectionHead
-            no="04"
-            kanji="世界"
+            no="06"
             caption={
               <>
                 off the clock
@@ -792,10 +719,9 @@ export default function PortfolioShell() {
           </div>
         </section>
 
-        <section className="block shell">
+        <section className="block">
           <SectionHead
-            no="05"
-            kanji="今"
+            no="07"
             caption="right now"
             title={
               <>
@@ -805,7 +731,7 @@ export default function PortfolioShell() {
             note="as the crow flies"
           />
           <div className="duo reveal">
-            <div className="duo-col">
+            <div className="card inked" style={v({ "--h": 195 })}>
               <span className="label">
                 distance
                 <span className="nerd-comment">geo: ipapi.co, city-level, no cookies</span>
@@ -813,7 +739,7 @@ export default function PortfolioShell() {
               <h3>you are this far from me</h3>
               <Distance />
             </div>
-            <div className="duo-col">
+            <div className="card inked" style={v({ "--h": 300 })}>
               <span className="label">the guestbook</span>
               <h3>leave a mark before you go</h3>
               <SignaturePad />
@@ -821,158 +747,58 @@ export default function PortfolioShell() {
           </div>
         </section>
 
-        <section className="contact" id="contact">
-          <span className="contact-kanji jp" aria-hidden="true">
-            縁
-          </span>
-          <div className="contact-inner shell reveal">
-            <span className="label">06 · one last thing</span>
-            <h2>
-              have a problem worth <em>opening a laptop</em> for?
-            </h2>
-            <p className="contact-lead">Send me the messy version. That one is usually more interesting.</p>
-            <div className="mail-row">
-              <a className="mail-link" href={`mailto:${EMAIL}`} data-cursor="write">
-                {EMAIL}
-              </a>
-              <button className="ghost-button copy-button" type="button" onClick={copyEmail} aria-live="polite">
-                {copied ? "copied ✿" : "copy"}
-              </button>
+        <section className="block" id="contact">
+          <div className="contact inked redraw reveal" style={v({ "--h": 25 })}>
+            <div className="contact-copy">
+              <span className="label">
+                <span className="section-no">08</span> one last thing
+              </span>
+              <h2>
+                have a problem worth <em>opening a laptop</em> for?
+              </h2>
+              <p className="contact-lead">Send me the messy version. That one is usually more interesting.</p>
+              <div className="mail-row">
+                <a className="mail-link" href={`mailto:${EMAIL}`}>
+                  <span data-scramble>{EMAIL}</span>
+                </a>
+                <button className="pill copy-button" type="button" onClick={copyEmail} aria-live="polite">
+                  {copied ? "copied" : "copy"}
+                </button>
+              </div>
+              <div className="hero-actions">
+                <a className="button" href={`mailto:${EMAIL}`}>
+                  write to me
+                  <ArrowIcon />
+                </a>
+                <ExternalLink className="button button-ghost" href="https://github.com/whynotramaa">
+                  github
+                  <ArrowIcon />
+                </ExternalLink>
+              </div>
+              <p className="hand contact-aside">probably up too late building something</p>
             </div>
-            <ExternalLink className="button" href="https://github.com/whynotramaa" magnetic>
-              <span className="button-fill" aria-hidden="true" />
-              <span className="button-text">find me on github</span>
-              <ArrowIcon className="button-arrow" />
-            </ExternalLink>
-            <p className="hand contact-aside">
-              probably up too late building something
-            </p>
+            <Ink d={doodles.letter} id="ink-letter" className="sketch contact-art" />
           </div>
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="shell">
-          <AsciiScene />
-          <div className="footer-bar">
-            <div className="footer-side">
-              <Wordmark href="#top" />
-              <span className="label">made with zero em dashes</span>
-            </div>
-            <span className="footer-thanks jp" aria-hidden="true" data-tip="arigatō · thank you">
-              ありがとう
-            </span>
-            <div className="footer-side">
-              <span className="label">
-                <span className="clock" key={time}>
-                  {time}
-                </span>{" "}
-                ist, rourkela
-              </span>
-              <span className="label">© 2026</span>
-              <a className="label back-top" href="#top">
-                back to top ↑
-              </a>
-            </div>
-          </div>
+      <footer className="site-footer shell">
+        <AsciiCricket />
+        <p className="footer-status">
+          <Manifest /> · 7 things shipped · 1 pasta incident, unresolved
+        </p>
+        <div className="footer-bar">
+          <Wordmark href="#top" />
+          <span className="label">made with zero em dashes</span>
+          <span className="label">
+            <Clock time={time} /> ist, rourkela · © 2026
+          </span>
+          <a className="label back-top" href="#top">
+            <span data-scramble>back to top</span> ↑
+          </a>
         </div>
       </footer>
     </div>
   );
 }
 
-const kanjiMeaning: Record<string, string> = {
-  私: "watashi · me",
-  作品: "sakuhin · works",
-  道具: "dōgu · tools",
-  世界: "sekai · world",
-  今: "ima · now",
-};
-
-function SectionHead({
-  no,
-  kanji,
-  caption,
-  title,
-  note,
-}: {
-  no: string;
-  kanji: string;
-  caption: ReactNode;
-  title: ReactNode;
-  note: string;
-}) {
-  return (
-    <div className="section-head reveal">
-      <div className="section-index">
-        <span className="section-no">{no}</span>
-        <span className="section-kanji jp" aria-hidden="true" data-tip={kanjiMeaning[kanji]}>
-          {kanji}
-        </span>
-      </div>
-      <h2>{title}</h2>
-      <div className="head-side">
-        <span className="label">{caption}</span>
-        <p className="hand head-note">{note}</p>
-      </div>
-    </div>
-  );
-}
-
-function Work() {
-  return (
-    <ol className="work-list">
-      {projects.map((project, index) => {
-        const live = project.href !== project.repo;
-        return (
-          <li key={project.number} className="work-row reveal" style={v({ "--i": index })}>
-            <span className="work-number">{project.number}</span>
-            <div className="work-main">
-              <h3 className="work-title">
-                <ExternalLink className="work-link" href={project.href} cursor={live ? "visit ↗" : "read code ↗"}>
-                  <span className="work-name">{project.name}</span>
-                </ExternalLink>
-                <span className="hand work-hook">{project.hook}</span>
-              </h3>
-              <dl className="work-details">
-                <div>
-                  <dt>problem</dt>
-                  <dd>{project.problem}</dd>
-                </div>
-                <div>
-                  <dt>built</dt>
-                  <dd>{project.built}</dd>
-                </div>
-              </dl>
-              <ul className="tags">
-                {project.tags.map((tag) => (
-                  <li key={tag}>{tag}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="work-side">
-              <p className="work-proof">
-                <strong>
-                  {project.proof.value}
-                  <PencilRing />
-                </strong>
-                <span>{project.proof.label}</span>
-              </p>
-              <span className="label work-type">{project.type}</span>
-              <div className="work-actions">
-                {live && (
-                  <ExternalLink className="work-action" href={project.href}>
-                    live site <ArrowIcon />
-                  </ExternalLink>
-                )}
-                <ExternalLink className="work-action" href={project.repo}>
-                  source <ArrowIcon />
-                </ExternalLink>
-              </div>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}

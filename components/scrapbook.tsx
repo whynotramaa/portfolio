@@ -1,9 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { cutouts } from "@/lib/world";
+import { cutouts, type Cutout } from "@/lib/world";
 
 type Pos = { x: number; y: number };
+type Place = Pos & { r: number };
+
+const initial = (list: Cutout[]) => Object.fromEntries(list.map((c) => [c.id, { x: c.x, y: c.y, r: c.rotate }]));
+const KEY = "ramaa-cards";
 
 /**
  * Cutouts pinned to a desk. Positions are percentages of the desk box so the
@@ -11,14 +15,55 @@ type Pos = { x: number; y: number };
  */
 export function Scrapbook() {
   const deskRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<Record<string, Pos>>(() =>
-    Object.fromEntries(cutouts.map((c) => [c.id, { x: c.x, y: c.y }])),
-  );
+  const [mine, setMine] = useState<Cutout[]>([]);
+  const [pos, setPos] = useState<Record<string, Place>>(() => initial(cutouts));
+  const [adding, setAdding] = useState(false);
+  const [shuffling, setShuffling] = useState(false);
   const [top, setTop] = useState<string | null>(null);
   const [moved, setMoved] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [dropped, setDropped] = useState<string | null>(null);
   const drag = useRef<{ id: string; dx: number; dy: number } | null>(null);
+
+  const all = [...cutouts, ...mine];
+
+  useEffect(() => {
+    try {
+      const saved: Cutout[] = JSON.parse(window.localStorage.getItem(KEY) ?? "[]");
+      setMine(saved);
+      setPos((prev) => ({ ...prev, ...initial(saved) }));
+    } catch {}
+  }, []);
+
+  const save = (list: Cutout[]) => {
+    setMine(list);
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(list));
+    } catch {}
+  };
+
+  const addCard = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const title = String(form.get("title") ?? "").trim();
+    if (!title) return;
+    const card: Cutout = {
+      id: `you-${Date.now()}`,
+      kind: "yours",
+      title,
+      meta: "pinned by you",
+      note: String(form.get("note") ?? "").trim(),
+      x: 20 + Math.random() * 40,
+      y: 20 + Math.random() * 40,
+      rotate: Math.random() * 10 - 5,
+    };
+    save([...mine, card]);
+    setPos((prev) => ({ ...prev, ...initial([card]) }));
+    setTop(card.id);
+    setAdding(false);
+  };
+
+  const removeCard = (id: string) => save(mine.filter((c) => c.id !== id));
 
   const onPointerDown = (event: React.PointerEvent<HTMLElement>, id: string) => {
     const desk = deskRef.current;
@@ -45,7 +90,7 @@ export function Scrapbook() {
     const y = ((event.clientY - deskBox.top) / deskBox.height) * 100 - active.dy;
     setPos((prev) => ({
       ...prev,
-      [active.id]: { x: Math.min(92, Math.max(-4, x)), y: Math.min(92, Math.max(-4, y)) },
+      [active.id]: { ...prev[active.id], x: Math.min(92, Math.max(-4, x)), y: Math.min(92, Math.max(-4, y)) },
     }));
   };
 
@@ -55,24 +100,41 @@ export function Scrapbook() {
     setActive(null);
   };
 
+  const settle = () => {
+    setShuffling(true);
+    window.setTimeout(() => setShuffling(false), 700);
+  };
+
   const reset = () => {
-    setPos(Object.fromEntries(cutouts.map((c) => [c.id, { x: c.x, y: c.y }])));
+    settle();
+    setPos(initial(all));
     setMoved(false);
+  };
+
+  const shuffle = () => {
+    settle();
+    setPos(
+      Object.fromEntries(
+        all.map((c) => [c.id, { x: Math.random() * 72, y: Math.random() * 66, r: Math.random() * 16 - 8 }]),
+      ),
+    );
+    setTop(null);
+    setMoved(true);
   };
 
   return (
     <div className="scrapbook">
-      <div className="desk" ref={deskRef}>
-        {cutouts.map((cut) => (
+      <div className={`desk${shuffling ? " is-shuffling" : ""}`} ref={deskRef}>
+        {all.map((cut) => (
           <article
             key={cut.id}
-            className={`cutout cutout-${cut.kind}${top === cut.id ? " is-top" : ""}${active === cut.id ? " is-dragging" : ""}${dropped === cut.id ? " is-dropped" : ""}`}
+            className={`cutout cutout-${cut.kind} cutout-${cut.id}${top === cut.id ? " is-top" : ""}${active === cut.id ? " is-dragging" : ""}${dropped === cut.id ? " is-dropped" : ""}`}
             data-cursor="drag"
             onAnimationEnd={() => setDropped(null)}
             style={{
               left: `${pos[cut.id].x}%`,
               top: `${pos[cut.id].y}%`,
-              ["--rotate" as string]: `${cut.rotate}deg`,
+              ["--rotate" as string]: `${pos[cut.id].r}deg`,
             }}
             onPointerDown={(event) => onPointerDown(event, cut.id)}
             onPointerMove={onPointerMove}
@@ -84,6 +146,22 @@ export function Scrapbook() {
                 <span className="stamp-rule">passport</span>
                 <strong>{cut.title}</strong>
                 <span className="stamp-meta">{cut.meta}</span>
+              </>
+            ) : cut.kind === "yours" ? (
+              <>
+                <span className="cutout-tape" aria-hidden="true" />
+                <span className="cutout-kind">{cut.meta}</span>
+                <strong>{cut.title}</strong>
+                {cut.note && <p className="hand">{cut.note}</p>}
+                <button
+                  type="button"
+                  className="cutout-remove"
+                  aria-label={`remove ${cut.title}`}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={() => removeCard(cut.id)}
+                >
+                  ×
+                </button>
               </>
             ) : (
               <>
@@ -97,13 +175,34 @@ export function Scrapbook() {
           </article>
         ))}
       </div>
+      {adding && (
+        <form className="desk-form" onSubmit={addCard}>
+          <input name="title" placeholder="a film, a player, a place" maxLength={40} required autoFocus />
+          <input name="note" placeholder="why it is on your desk" maxLength={60} />
+          <button type="submit" className="ghost-button">
+            pin it
+          </button>
+          <button type="button" className="ghost-button" onClick={() => setAdding(false)}>
+            never mind
+          </button>
+          <p className="label desk-form-note">saved on this device only, nobody else sees it</p>
+        </form>
+      )}
       <div className="desk-controls">
         <p className={`hand desk-hint${moved ? " is-used" : ""}`}>
           {moved ? "yes, they stay where you drop them" : "drag them around, it is your desk now ↙"}
         </p>
-        <button type="button" className="ghost-button" onClick={reset} disabled={!moved}>
-          tidy up
-        </button>
+        <div className="desk-buttons">
+          <button type="button" className="ghost-button" onClick={() => setAdding(true)} disabled={adding}>
+            add yours
+          </button>
+          <button type="button" className="ghost-button" onClick={shuffle}>
+            shuffle
+          </button>
+          <button type="button" className="ghost-button" onClick={reset} disabled={!moved}>
+            tidy up
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -160,7 +259,7 @@ export function SignaturePad() {
     const next = point(event);
     // pressure-ish: faster strokes draw thinner, so it reads like a pen
     const speed = Math.hypot(next.x - last.current.x, next.y - last.current.y);
-    ctx.strokeStyle = getComputedStyle(event.currentTarget).color;
+    ctx.strokeStyle = "#141414";
     ctx.lineWidth = Math.max(1.1, 3 - speed * 0.09);
     ctx.beginPath();
     ctx.moveTo(last.current.x, last.current.y);

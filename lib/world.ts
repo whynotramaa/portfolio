@@ -1,6 +1,6 @@
 export type Cutout = {
   id: string;
-  kind: "film" | "cricket" | "stamp";
+  kind: "film" | "cricket" | "stamp" | "yours";
   title: string;
   meta: string;
   note: string;

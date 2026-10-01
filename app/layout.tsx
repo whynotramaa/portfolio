@@ -2,21 +2,27 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 
+const description =
+  "Products, interfaces, experiments, failed companies, sports, and difficult-to-explain things by a final-year computer science student.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ramaa.tech"),
   title: "ramaa, not the chosen one",
-  description:
-    "Products, interfaces, experiments, failed companies, sports, and difficult-to-explain things by a final-year computer science student.",
+  description,
+  openGraph: { title: "ramaa, not the chosen one", description, url: "/", siteName: "ramaa", type: "website" },
+  twitter: { card: "summary_large_image", title: "ramaa, not the chosen one", description },
 };
 
-const jpFont = `https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500&display=swap&text=${encodeURIComponent(
-  "ラマーものづくり、ときどき冗談。私作品道具世界今縁ありがとう言語画面基盤",
-)}`;
+const sansFont =
+  "https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300..700&family=Plus+Jakarta+Sans:wght@300..700&display=swap";
 
 const themeScript = `
 try {
   var t = localStorage.getItem("ramaa-theme");
   if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   document.documentElement.dataset.theme = t;
+  if (sessionStorage.getItem("ramaa-seen")) document.documentElement.classList.add("seen");
+  sessionStorage.setItem("ramaa-seen", "1");
 } catch (e) {}
 document.documentElement.classList.add("js");
 `;
@@ -25,11 +31,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preload" href="/fonts/AppleGaramond-Light.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/fonts/Archivo.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/Zarathustra.otf" as="font" type="font/otf" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/GeistMono.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href={jpFont} />
-        <link rel="preload" href="/fonts/Peehu-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={sansFont} />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>{children}</body>

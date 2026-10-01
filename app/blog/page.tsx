@@ -21,9 +21,8 @@ export default function BlogPage() {
             Add a post to <code>lib/posts.ts</code> and it shows up here. No redesign needed.
           </p>
           <Link className="button" href="/" style={{ justifySelf: "start" }}>
-            <span className="button-fill" aria-hidden="true" />
-            <span className="button-text">back home</span>
-            <ArrowIcon className="button-arrow" />
+            back home
+            <ArrowIcon />
           </Link>
         </section>
       ) : (

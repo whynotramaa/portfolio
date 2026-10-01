@@ -50,18 +50,6 @@ export const projects: Project[] = [
   },
   {
     number: "04",
-    name: "Kairo",
-    type: "product · ai",
-    hook: "no-code automation without the mystery.",
-    problem: "Teams want flexible workflows without losing logs, retries, or credential safety.",
-    built: "A visual builder for APIs, AI providers, notifications, and durable background jobs.",
-    tags: ["next.js", "xyflow", "inngest"],
-    href: "https://kairo-automation.vercel.app",
-    repo: "https://github.com/whynotramaa/kairo---automation",
-    proof: { value: "4 ai providers", label: "openai, anthropic, google and groq as flow nodes" },
-  },
-  {
-    number: "05",
     name: "PlayWhatever",
     type: "social · multiplayer",
     hook: "pass the phone, not the signup wall.",
@@ -73,7 +61,7 @@ export const projects: Project[] = [
     proof: { value: "4 games", label: "live rooms, joined with a six-character code" },
   },
   {
-    number: "06",
+    number: "05",
     name: "MovieFlix & Chill",
     type: "web · recommendations",
     hook: "the next movie, minus twelve open tabs.",
@@ -84,10 +72,25 @@ export const projects: Project[] = [
     repo: "https://github.com/whynotramaa/movie-recommendation",
     proof: { value: "infinite", label: "scroll search, debounced so tmdb stays calm" },
   },
+
+  {
+    number: "06",
+    name: "Kairo",
+    type: "product · ai",
+    hook: "no-code automation without the mystery.",
+    problem: "Teams want flexible workflows without losing logs, retries, or credential safety.",
+    built: "A visual builder for APIs, AI providers, notifications, and durable background jobs.",
+    tags: ["next.js", "xyflow", "inngest"],
+    href: "https://kairo-automation.vercel.app",
+    repo: "https://github.com/whynotramaa/kairo---automation",
+    proof: { value: "4 ai providers", label: "openai, anthropic, google and groq as flow nodes" },
+  },];
+
+export const research: Project[] = [
   {
     number: "07",
     name: "FCSG-Net",
-    type: "research · deep learning",
+    type: "ongoing · machine learning",
     hook: "image restoration with a tiny GPU budget.",
     problem: "Research needs interpretable expert routing under 5M parameters, with training that survives a killed notebook.",
     built: "Frequency bands, per-location routing, DnCNN validation, ablations, and resumable checkpoints.",

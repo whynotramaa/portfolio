@@ -1,48 +1,45 @@
-export type StackItem = { name: string; icon: string; color?: string };
-export type StackGroup = { label: string; kanji: string; meaning: string; items: StackItem[] };
+export type StackItem = { name: string; icon: string; color?: string; note?: string };
+export type StackGroup = { title: string; label: string; items: StackItem[] };
 
 const icon = (slug: string): StackItem => ({
   name: slug,
   icon: `https://cdn.simpleicons.org/${slug}/000000`,
 });
 
-const named = (name: string, slug: string, color?: string): StackItem => ({ ...icon(slug), name, color });
+const named = (name: string, slug: string, color?: string, note?: string): StackItem => ({ ...icon(slug), name, color, note });
 
 export const stackGroups: StackGroup[] = [
   {
+    title: "the base",
     label: "languages & runtime",
-    kanji: "言語",
-    meaning: "gengo · languages",
     items: [
-      named("TypeScript", "typescript", "#3178c6"),
-      named("JavaScript", "javascript", "#e8c900"),
-      named("Python", "python", "#3776ab"),
-      named("Node.js", "nodedotjs", "#5fa04e"),
-      named("SQL", "sqlite", "#0f80cc"),
+      named("TypeScript", "typescript", "#3178c6", "a lot"),
+      named("JavaScript", "javascript", "#e8c900", "leftovers"),
+      named("Python", "python", "#3776ab", "ml bits"),
+      named("Node.js", "nodedotjs", "#5fa04e", "to taste"),
+      named("SQL", "sqlite", "#0f80cc", "by hand"),
     ],
   },
   {
+    title: "the plating",
     label: "product & interface",
-    kanji: "画面",
-    meaning: "gamen · screens",
     items: [
-      named("React", "react", "#1fb6d9"),
-      named("Next.js", "nextdotjs"),
-      named("Tailwind", "tailwindcss", "#06b6d4"),
-      named("Figma", "figma", "#f24e1e"),
-      named("Vite", "vite", "#646cff"),
+      named("React", "react", "#1fb6d9", "daily"),
+      named("Next.js", "nextdotjs", undefined, "the pan"),
+      named("Tailwind", "tailwindcss", "#06b6d4", "a pinch"),
+      named("Figma", "figma", "#f24e1e", "first"),
+      named("Vite", "vite", "#646cff", "quick ones"),
     ],
   },
   {
+    title: "the pantry",
     label: "data & infrastructure",
-    kanji: "基盤",
-    meaning: "kiban · foundations",
     items: [
-      named("Postgres", "postgresql", "#4169e1"),
-      named("Redis", "redis", "#ff4438"),
-      named("Convex", "convex", "#ee342f"),
-      named("Prisma", "prisma"),
-      named("Vercel", "vercel"),
+      named("Postgres", "postgresql", "#4169e1", "stocked"),
+      named("Redis", "redis", "#ff4438", "a dash"),
+      named("Convex", "convex", "#ee342f", "realtime"),
+      named("Prisma", "prisma", undefined, "sparingly"),
+      named("Vercel", "vercel", undefined, "to serve"),
     ],
   },
 ];
