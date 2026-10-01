@@ -6,11 +6,12 @@ const description =
   "Products, interfaces, experiments, failed companies, sports, and difficult-to-explain things by a final-year computer science student.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ramaa.tech"),
+  metadataBase: new URL("https://www.ramaa.tech"),
   title: "ramaa, not the chosen one",
   description,
   openGraph: { title: "ramaa, not the chosen one", description, url: "/", siteName: "ramaa", type: "website" },
   twitter: { card: "summary_large_image", title: "ramaa, not the chosen one", description },
+  alternates: { canonical: "/" },
 };
 
 const sansFont =
