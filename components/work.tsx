@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { projects, type Project } from "@/lib/projects";
 import { Sketch } from "@/components/sketches";
 
-const hues = [150, 250, 25, 300, 50, 85, 195];
+const hues = [150, 345, 250, 25, 300, 50, 85, 195];
 
 export function FlipWords({ words, every = 2400 }: { words: string[]; every?: number }) {
   const [i, setI] = useState(0);
@@ -52,13 +52,19 @@ export default function Work({ items = projects }: { items?: Project[] }) {
         return (
           <li
             key={project.number}
-            className="proj inked redraw"
+            className={`proj inked redraw${project.lab ? " proj-ml" : ""}${project.feat ? " feat" : ""}`}
             style={{ "--h": hues[i] } as CSSProperties}
             onPointerEnter={() => setHot(i)}
             onPointerLeave={() => setHot(null)}
           >
             <div className="proj-art">
               <Sketch index={i} boil={hot === i} />
+              {project.lab && (
+                <p className="ml-stamp">
+                  <strong>ML</strong>
+                  {project.lab}
+                </p>
+              )}
             </div>
             <div className="proj-body">
               <p className="label proj-meta">

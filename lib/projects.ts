@@ -9,6 +9,8 @@ export type Project = {
   href: string;
   repo: string;
   proof: { value: string; label: string };
+  lab?: string;
+  feat?: boolean;
 };
 
 export const projects: Project[] = [
@@ -26,6 +28,20 @@ export const projects: Project[] = [
   },
   {
     number: "02",
+    name: "octlm",
+    type: "ml · language models",
+    hook: "a language model, built from the first byte.",
+    problem: "Most LLM projects start at someone else's tokenizer and end at someone else's fine-tuning library.",
+    built: "Byte-level BPE, a modern decoder, a 26M TinyStories model, Qwen3-0.6B in the same code, and a hand-written LoRA.",
+    tags: ["pytorch", "lora", "qwen3-0.6b"],
+    href: "https://octlm.ramaa.tech",
+    repo: "https://github.com/whynotramaa/octlm",
+    proof: { value: "2.5% → 46.7%", label: "agent pass rate on 40 tasks, after a LoRA I wrote myself" },
+    lab: "from byte 0",
+    feat: true,
+  },
+  {
+    number: "03",
     name: "Shardly",
     type: "systems · search",
     hook: "a small search engine that shows its work.",
@@ -37,7 +53,7 @@ export const projects: Project[] = [
     proof: { value: "6–21 ms", label: "indexed queries on 50k docs, vs ~800 ms naive" },
   },
   {
-    number: "03",
+    number: "04",
     name: "PaperCode",
     type: "terminal · ai",
     hook: "a coding agent with a brake pedal.",
@@ -49,7 +65,7 @@ export const projects: Project[] = [
     proof: { value: "153 tests", label: "vitest, around every tool and permission gate" },
   },
   {
-    number: "04",
+    number: "05",
     name: "PlayWhatever",
     type: "social · multiplayer",
     hook: "pass the phone, not the signup wall.",
@@ -61,7 +77,7 @@ export const projects: Project[] = [
     proof: { value: "4 games", label: "live rooms, joined with a six-character code" },
   },
   {
-    number: "05",
+    number: "06",
     name: "MovieFlix & Chill",
     type: "web · recommendations",
     hook: "the next movie, minus twelve open tabs.",
@@ -74,7 +90,7 @@ export const projects: Project[] = [
   },
 
   {
-    number: "06",
+    number: "07",
     name: "Kairo",
     type: "product · ai",
     hook: "no-code automation without the mystery.",
@@ -88,7 +104,7 @@ export const projects: Project[] = [
 
 export const research: Project[] = [
   {
-    number: "07",
+    number: "08",
     name: "FCSG-Net",
     type: "ongoing · machine learning",
     hook: "image restoration with a tiny GPU budget.",
@@ -98,5 +114,6 @@ export const research: Project[] = [
     href: "https://github.com/whynotramaa/fcsg-capstone",
     repo: "https://github.com/whynotramaa/fcsg-capstone",
     proof: { value: "< 5M params", label: "validated against a published DnCNN baseline first" },
+    lab: "still training",
   },
 ];

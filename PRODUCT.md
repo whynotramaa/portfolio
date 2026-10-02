@@ -16,7 +16,7 @@ Personal portfolio of Ramnath ("ramaa"), final-year B.Tech CSE at NIT Rourkela, 
 
 ## Positioning
 
-A builder with product taste and a sense of humour. The personality (jokes, handwriting, off-the-clock world) is the differentiator, backed by seven real shipped projects.
+A builder with product taste and a sense of humour. The personality (jokes, handwriting, off-the-clock world) is the differentiator, backed by eight real shipped projects.
 
 ## Capabilities and Constraints
 
@@ -32,7 +32,7 @@ A builder with product taste and a sense of humour. The personality (jokes, hand
 
 ## Evidence on Hand
 
-- Projects: `lib/projects.ts` (Howzat, Shardly, PaperCode, Kairo, PlayWhatever, MovieFlix & Chill, FCSG-Net), with live links.
+- Projects: `lib/projects.ts` (Howzat, octlm, Shardly, PaperCode, Kairo, PlayWhatever, MovieFlix & Chill, FCSG-Net). octlm and FCSG-Net are the ML projects and carry the ML stamp, with live links.
 - Stack: `lib/stack.ts`. World cutouts: `lib/world.ts`.
 - No project screenshots, no photos of the person, no testimonials. Do not fabricate any.
 

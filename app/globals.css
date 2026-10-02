@@ -482,10 +482,46 @@ button.pill:hover { color: var(--ink); border-color: var(--line-2); translate: 0
 .ink-link { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 12px; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; transition: background-size 0.4s var(--ease); }
 .ink-link:hover { background-size: 0 1px; background-position: 100% 100%; }
 .ink-link .arrow-icon { width: 11px; height: 11px; }
+.proj-ml .proj-art {
+  background:
+    linear-gradient(var(--line-2) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(90deg, var(--line-2) 1px, transparent 1px) 0 0 / 80px 80px,
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 16px 16px,
+    var(--sunken);
+}
+.ml-stamp {
+  position: absolute;
+  top: -12px;
+  right: -8px;
+  display: grid;
+  justify-items: center;
+  padding: 5px 10px 6px;
+  rotate: 7deg;
+  border: 2px solid currentColor;
+  border-radius: var(--wob);
+  outline: 1px solid currentColor;
+  outline-offset: 3px;
+  background: color-mix(in oklab, var(--surface) 85%, transparent);
+  color: oklch(var(--pop) 265);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  filter: url(#ink-edge);
+  pointer-events: none;
+  transition: rotate 0.4s var(--ease);
+}
+.ml-stamp strong { font-family: var(--serif); font-size: 26px; font-weight: 400; line-height: 1; letter-spacing: 0.06em; }
+.proj-ml:hover .ml-stamp { rotate: -3deg; }
+.proj-ml .proj-meta { color: oklch(var(--pop) 265); }
 @media (min-width: 760px) {
-  .proj:first-child { grid-column: 1 / -1; grid-template-columns: 1.15fr 1fr; align-items: center; }
-  .proj:first-child .proj-art { margin: 10px 0 10px 10px; }
-  .proj:first-child h3 { font-size: 38px; }
+  .proj:is(:first-child, .feat) { grid-column: 1 / -1; grid-template-columns: 1.15fr 1fr; align-items: center; }
+  .proj:is(:first-child, .feat) .proj-art { margin: 10px 0 10px 10px; }
+  .proj:is(:first-child, .feat) h3 { font-size: 38px; }
+  .proj.feat:nth-child(even) { grid-template-columns: 1fr 1.15fr; }
+  .proj.feat:nth-child(even) .proj-art { order: 1; margin: 10px 10px 10px 0; }
 }
 
 .sketch { display: block; width: 100%; height: 100%; overflow: visible; }
