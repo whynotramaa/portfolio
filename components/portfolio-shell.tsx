@@ -1,15 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties, MouseEvent, ReactNode } from "react";
 import { orbitStack, stackGroups } from "@/lib/stack";
 import Distance from "@/components/distance";
-import Work, { FlipWords } from "@/components/work";
-import { research } from "@/lib/projects";
+import Work from "@/components/work";
+import { projects, research } from "@/lib/projects";
 import { AsciiField } from "@/components/ascii";
 import { Runner } from "@/components/runner";
-import { Ink, doodles } from "@/components/sketches";
+import { Ink, doodles, studies } from "@/components/sketches";
 import { Scrapbook, SignaturePad } from "@/components/scrapbook";
 import { FoomatoSketch } from "@/components/foomato";
 
@@ -153,12 +153,17 @@ export function ThemeToggle() {
   );
 }
 
-function GlassesIcon() {
+function AiScribble() {
   return (
-    <svg className="glyph glyph-wide" viewBox="0 0 26 14" fill="none" aria-hidden="true">
-      <circle cx="6" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.3" />
-      <circle cx="20" cy="7" r="4.4" stroke="currentColor" strokeWidth="1.3" />
-      <path d="M10.4 7c1-1 4.2-1 5.2 0M1.6 5.4 0.6 4M24.4 5.4l1-1.4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    <svg className="glyph glyph-wide ai-scribble" viewBox="0 0 26 16" fill="none" aria-hidden="true">
+      <path
+        d="M2 14.6C4 10.2 6.1 5.4 8.3 1.5c1.4 3.6 3 8.4 4.9 13.2M4.2 9.9c2.5-.9 5.2-.6 8.1-.3M16.2 2.1c1.9-.5 3.8-.2 5.6-.4M18.9 2c.2 4.1-.4 8.2.1 12.4M15.9 14.7c2.1-.6 4.2 0 6.4-.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        pathLength={1}
+      />
     </svg>
   );
 }
@@ -221,15 +226,22 @@ function Clock({ time }: { time: string }) {
   );
 }
 
-const excuses = ["instead of studying", "at 3am, mostly", "between cricket matches", "instead of sleeping", "for the plot"];
-
 const groupHue = [250, 150, 25];
 
 const facts = [
-  { doodle: "drawer", value: "7", label: "things in this drawer", h: 85 },
+  { doodle: "drawer", value: "7", label: "projects shipped", h: 85 },
   { doodle: "cap", value: "2027", label: "graduating from NIT Rourkela", h: 250 },
-  { doodle: "stamps", value: "2", label: "countries stood in", h: 25 },
-  { doodle: "open", value: "open", label: "to work and good problems", h: 150 },
+  { doodle: "stamps", value: "2", label: "countries visited", h: 25 },
+  { doodle: "open", value: "open", label: "to full-time roles", h: 150 },
+];
+
+const lately = [
+  "llm harness engineering, so agents use fewer tokens",
+  "go for backend services",
+  "image restoration research with fcsg-net",
+  "memory for ai agents",
+  "building a personal ai assistant, like muse",
+  "an idea: real-time netflix ads, picked per user and per show",
 ];
 
 const GLYPHS = "!<>-_/[]{}=+*^?#";
@@ -280,7 +292,7 @@ function InkStatus() {
       <ul className="status-list">
         {status.map(([name, n, value, h]) => (
           <li key={name} className="status-row" style={v({ "--h": h })}>
-            <span className="hand status-name">{name}</span>
+            <span className="status-name">{name}</span>
             <svg className="status-bar" viewBox="0 0 200 22" preserveAspectRatio="none" role="img" aria-label={`${n} out of 10`}>
               <g filter="url(#ink-edge)">
                 <path className="status-fill" d={`M3 4H${3 + n * 19.4}V18H4Z`} />
@@ -358,11 +370,11 @@ function ExperienceCard() {
           <h3>
             <Link href="/experience/foomato">Foomato</Link>
           </h3>
-          <p className="hand proj-hook">taught 200K old orders to set the table and read the clock.</p>
+          <p className="proj-hook">Built the home feed ranker and the delivery time (ETA) model, trained on 200K past orders.</p>
           <div className="proj-foot exp-foot">
             <p className="label proj-tags">feed ranker · eta model</p>
             <span className="ink-link exp-go">
-              read the case file <ArrowIcon />
+              read the full write-up <ArrowIcon />
             </span>
           </div>
         </div>
@@ -371,24 +383,219 @@ function ExperienceCard() {
   );
 }
 
-function SectionHead({ no, caption, title, note }: { no: string; caption: ReactNode; title: ReactNode; note: ReactNode }) {
+const studying = [
+  { key: "browser", name: "Browser use", hook: "How AI agents use a website: open pages, click buttons, read the result and retry when something breaks.", tags: "dom · playwright · vision", h: 195 },
+  { key: "memory", name: "Agentic memory", hook: "How AI agents remember things between chats, and decide what to keep, forget or look up.", tags: "episodic · semantic · retrieval", h: 300 },
+];
+
+function StudyCards() {
+  return (
+    <ul className="work study">
+      {studying.map((s) => (
+        <li key={s.key} className="proj exp inked redraw" style={v({ "--h": s.h })}>
+          <div className="proj-art">
+            <Ink d={studies[s.key]} id={`ink-study-${s.key}`} />
+          </div>
+          <div className="proj-body">
+            <p className="label proj-meta">studying now</p>
+            <h3>{s.name}</h3>
+            <p className="proj-hook">{s.hook}</p>
+            <div className="proj-foot exp-foot">
+              <p className="label proj-tags">{s.tags}</p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function portfolioMarkdown() {
+  const project = (p: (typeof projects)[number]) => [
+    `### ${p.number}. ${p.name}`,
+    "",
+    p.hook,
+    "",
+    `- **type:** ${p.type}`,
+    `- **problem:** ${p.problem}`,
+    `- **built:** ${p.built}`,
+    `- **result:** ${p.proof.value}, ${p.proof.label}`,
+    `- **stack:** ${p.tags.join(", ")}`,
+    `- **live:** [${p.href.replace(/^https?:\/\//, "")}](${p.href})`,
+    `- **code:** [${p.repo.replace(/^https?:\/\//, "")}](${p.repo})`,
+    "",
+  ];
+  return [
+    "---",
+    "name: Ramnath (ramaa)",
+    "role: B.Tech CSE student, final year, NIT Rourkela, India",
+    "graduating: 2027",
+    "status: open to full-time roles",
+    `email: ${EMAIL}`,
+    "github: https://github.com/whynotramaa",
+    "timezone: IST (Asia/Kolkata)",
+    "---",
+    "",
+    "# ramaa",
+    "",
+    "> I make the worst pasta and the best jokes.",
+    "",
+    "Products, interfaces, little experiments, failed companies, sports, and occasionally things that are difficult to explain without opening a laptop.",
+    "",
+    "## About",
+    "",
+    "I build web apps, developer tools and small machine learning models. I like products that are simple to use and code that is easy to read.",
+    "",
+    "Final year B.Tech CSE student at NIT Rourkela, India. I graduate in 2027 and I am looking for a full-time job.",
+    "",
+    "### Quick facts",
+    "",
+    ...facts.map((f) => `- **${f.value}** ${f.label}`),
+    "",
+    "### What I am into lately",
+    "",
+    ...lately.map((item) => `- ${item}`),
+    "",
+    "### Status, self reported",
+    "",
+    "| thing | score | note |",
+    "| --- | --- | --- |",
+    ...status.map(([name, n, value]) => `| ${name} | ${n}/10 | ${value} |`),
+    "",
+    "## Experience",
+    "",
+    "### Foomato, ML intern",
+    "",
+    "- **when:** May to Jul 2026",
+    "- **where:** Nepal",
+    "- **what:** Built the home feed ranker and the delivery time (ETA) model, trained on 200K past orders.",
+    "- **write-up:** [/experience/foomato](/experience/foomato)",
+    "",
+    "## Studying now",
+    "",
+    ...studying.flatMap((s) => [`### ${s.name}`, "", s.hook, "", `- **topics:** ${s.tags.replaceAll(" · ", ", ")}`, ""]),
+    "## Projects",
+    "",
+    ...projects.flatMap(project),
+    "## Research",
+    "",
+    ...research.flatMap(project),
+    "## Tech stack",
+    "",
+    ...stackGroups.flatMap((g) => [`### ${g.title}, ${g.label}`, "", ...g.items.map((i) => `- **${i.name}:** ${i.note}`), ""]),
+    "## Contact",
+    "",
+    "Email me about a job, a project, or anything you are building. I reply to every email.",
+    "",
+    `- **email:** [${EMAIL}](mailto:${EMAIL})`,
+    "- **github:** [github.com/whynotramaa](https://github.com/whynotramaa)",
+  ].join("\n");
+}
+
+function MarkdownInline({ text }: { text: string }) {
+  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/).map((part, i) => {
+    const bold = part.match(/^\*\*(.+)\*\*$/);
+    if (bold)
+      return (
+        <strong key={i}>
+          <span className="md-mark">**</span>
+          {bold[1]}
+          <span className="md-mark">**</span>
+        </strong>
+      );
+    const link = part.match(/^\[(.+)\]\((.+)\)$/);
+    if (link)
+      return (
+        <span key={i}>
+          <span className="md-mark">[</span>
+          {link[1]}
+          <span className="md-mark">](</span>
+          <a className="md-link" href={link[2]}>
+            {link[2]}
+          </a>
+          <span className="md-mark">)</span>
+        </span>
+      );
+    return part;
+  });
+}
+
+function MarkdownFile({ source }: { source: string }) {
+  const lines = source.split("\n");
+  let front = 0;
+  return (
+    <article className="md-file">
+      <div className="md-bar label">
+        <span>ramaa.md</span>
+        <span>{lines.length} lines · plain text, made for llms</span>
+      </div>
+      <div className="md-body">
+        {lines.map((line, i) => {
+          if (line === "---") front++;
+          const heading = line.match(/^(#{1,3}) (.*)$/);
+          const marker = line.match(/^(- |> )(.*)$/);
+          let cls = "md-line";
+          let body: ReactNode = <MarkdownInline text={line} />;
+          if (front < 2 || line === "---") {
+            cls += " md-front";
+            const [key, ...rest] = line.split(": ");
+            body = rest.length ? (
+              <>
+                <span className="md-key">{key}</span>
+                <span className="md-mark">: </span>
+                {rest.join(": ")}
+              </>
+            ) : (
+              <span className="md-mark">{line}</span>
+            );
+          } else if (heading) {
+            cls += ` md-h${heading[1].length}`;
+            body = (
+              <>
+                <span className="md-mark">{heading[1]} </span>
+                {heading[2]}
+              </>
+            );
+          } else if (marker) {
+            cls += marker[1] === "> " ? " md-quote" : "";
+            body = (
+              <>
+                <span className="md-mark">{marker[1]}</span>
+                <MarkdownInline text={marker[2]} />
+              </>
+            );
+          } else if (line.startsWith("|")) {
+            cls += " md-table";
+            body = line.split(/(\|)/).map((cell, j) => (cell === "|" ? <span key={j} className="md-mark">|</span> : cell));
+          }
+          return (
+            <div key={i} className={cls}>
+              <span>{body}</span>
+            </div>
+          );
+        })}
+      </div>
+    </article>
+  );
+}
+
+function SectionHead({ no, caption, title, note }: { no: string; caption: ReactNode; title: ReactNode; note?: ReactNode }) {
   return (
     <header className="section-head reveal">
       <span className="label">
         <span className="section-no">{no}</span> {caption}
       </span>
       <h2>{title}</h2>
-      <p className="hand head-note">{note}</p>
+      {note && <p className="hand head-note">{note}</p>}
     </header>
   );
 }
 
 export default function PortfolioShell() {
-  const [nerdMode, setNerdMode] = useState(false);
+  const [aiMode, setAiMode] = useState(false);
   const [time, setTime] = useState("--:--");
   const [copied, setCopied] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const pageRef = useRef<HTMLDivElement>(null);
   useScrambleOnHover();
 
   useEffect(() => {
@@ -407,15 +614,6 @@ export default function PortfolioShell() {
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    if (!nerdMode) return;
-    pageRef.current
-      ?.querySelectorAll<HTMLElement>("section, div, article, header, footer, nav, main, ul, aside")
-      .forEach((element) => {
-        if (!element.dataset.tag) element.dataset.tag = element.tagName.toLowerCase();
-      });
-  }, [nerdMode]);
-
   const copyEmail = () => {
     navigator.clipboard?.writeText(EMAIL).then(() => {
       setCopied(true);
@@ -424,7 +622,7 @@ export default function PortfolioShell() {
   };
 
   return (
-    <div ref={pageRef} className={nerdMode ? "nerd-mode" : undefined}>
+    <div>
       <svg className="ink-defs" aria-hidden="true">
         <filter id="ink-edge">
           <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves={2} seed={3} />
@@ -446,25 +644,33 @@ export default function PortfolioShell() {
           <button
             className="icon-button"
             type="button"
-            aria-pressed={nerdMode}
-            onClick={() => setNerdMode((enabled) => !enabled)}
-            aria-label="nerd mode"
-            data-tip={nerdMode ? "nerd mode: on" : "nerd mode"}
+            aria-pressed={aiMode}
+            onClick={() => {
+              setAiMode((enabled) => !enabled);
+              window.scrollTo(0, 0);
+            }}
+            aria-label="markdown version for ai"
+            data-tip={aiMode ? "back to the pretty one" : "markdown for ai"}
           >
-            <GlassesIcon />
+            <AiScribble />
           </button>
           <ThemeToggle />
         </div>
       </header>
 
 
+      {aiMode ? (
+        <main className="shell md-view">
+          <MarkdownFile source={portfolioMarkdown()} />
+        </main>
+      ) : (
+      <>
       <main className="shell">
         <section className="hero" id="top">
           <AsciiField />
           <div className="hero-top">
             <span className="label">
               portfolio · vol. 26
-              <span className="nerd-comment">hero: 5 letters, 60ms stagger, zero images</span>
             </span>
           </div>
 
@@ -559,32 +765,28 @@ export default function PortfolioShell() {
         <section className="block" id="about">
           <SectionHead
             no="01"
-            caption="the person holding the pen"
+            caption="about"
             title={
               <>
-                small team energy, <em>one person</em>
+                a bit <em>about me</em>
               </>
             }
-            note="no boring bio here"
           />
           <p className="lede reveal">
-            I like making useful things feel obvious. Sometimes that means a quiet interface. Sometimes it means teaching a
-            tiny search engine how to explain its own decisions.
+            I build web apps, developer tools and small machine learning models. I like products that are simple to use and
+            code that is easy to read.
           </p>
           <p className="about-sub reveal">
-            Final year B.Tech CSE at NIT Rourkela, India. Graduating 2027, and looking for a job before then.
+            Final year B.Tech CSE student at NIT Rourkela, India. I graduate in 2027 and I am looking for a full-time job.
           </p>
           <div className="about-grid">
             <InkStatus />
             <div className="note-card inked">
-              <p className="hand note-title">into these lately</p>
+              <p className="note-title">what I am into lately</p>
               <ul>
-                <li>llm and harness engineering to optimize tokens</li>
-                <li>go-lang for backend</li>
-                <li>research on image restoration using fcsg-net</li>
-                <li>learning about the memory layer for agents</li>
-                <li>trying to build a personal agentic bot system, like muse</li>
-                <li>daydreaming about swapping netflix ads per user and per series, all realtime</li>
+                {lately.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </div>
           </div>
@@ -604,73 +806,77 @@ export default function PortfolioShell() {
             no="02"
             caption={
               <>
-                where someone paid me to think
-                <span className="nerd-comment">one card, one route, a whole case file behind it</span>
+                experience
               </>
             }
             title={
               <>
-                one internship, <em>two models</em>
+                my <em>internship</em>
               </>
             }
-            note={
-              <>
-                real users, real momo<span className="x-out">s</span>
-              </>
-            }
+            note="foomato, nepal"
           />
           <ExperienceCard />
         </section>
 
-        <section className="block" id="work">
+        <section className="block" id="studying">
           <SectionHead
             no="03"
+            caption="studying now"
+            title={
+              <>
+                what I am <em>learning</em> right now
+              </>
+            }
+            note="notes coming soon"
+          />
+          <StudyCards />
+        </section>
+
+        <section className="block" id="work">
+          <SectionHead
+            no="04"
             caption={
               <>
-                selected work
-                <span className="nerd-comment">card grid, hover replays the ink and boils the turbulence</span>
+                projects
               </>
             }
             title={
               <>
-                things I built{" "}
-                <FlipWords words={excuses} />
+                projects <em>I have built</em>
               </>
             }
-            note="the good drawer"
           />
           <Work />
         </section>
 
         <section className="block" id="research">
           <SectionHead
-            no="04"
-            caption="ongoing research"
+            no="05"
+            caption="research"
             title={
               <>
-                poking at <em>machine learning</em>
+                my <em>research</em>
               </>
             }
-            note="still training"
+            note="in progress"
           />
           <Work items={research} />
         </section>
 
         <section className="block" id="stack">
           <SectionHead
-            no="05"
-            caption="the current toolbox"
+            no="06"
+            caption="tech stack"
             title={
               <>
-                what I make <em>things with</em>
+                tools I <em>use</em>
               </>
             }
-            note="plus 43 open tabs"
           />
           <div className="recipe inked reveal">
             <div className="recipe-top">
               <span className="label">recipe no. 26</span>
-              <span className="hand recipe-serves">serves one working product</span>
             </div>
             {stackGroups.map((group, g) => (
               <div className="recipe-group" key={group.label} style={v({ "--h": groupHue[g] })}>
@@ -688,31 +894,29 @@ export default function PortfolioShell() {
                       <span className="stack-icon" aria-hidden="true" />
                       <span className="recipe-name">{item.name}</span>
                       <span className="recipe-dots" aria-hidden="true" />
-                      <span className="hand recipe-qty">{item.note}</span>
+                      <span className="recipe-qty">{item.note}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
-            <p className="hand recipe-method">method: stir until it ships, serve warm.</p>
           </div>
         </section>
 
         <section className="block" id="world">
           <SectionHead
-            no="06"
+            no="07"
             caption={
               <>
-                off the clock
-                <span className="nerd-comment">desk: percent offsets, survives a resize</span>
+                outside work
               </>
             }
             title={
               <>
-                my world, <em>roughly pinned down</em>
+                things I <em>love</em>
               </>
             }
-            note="drag anything"
+            note="you can drag these"
           />
           <div className="reveal">
             <Scrapbook />
@@ -721,27 +925,25 @@ export default function PortfolioShell() {
 
         <section className="block">
           <SectionHead
-            no="07"
-            caption="right now"
+            no="08"
+            caption="say hi"
             title={
               <>
-                you, me, <em>and the map</em>
+                distance and <em>guestbook</em>
               </>
             }
-            note="as the crow flies"
           />
           <div className="duo reveal">
             <div className="card inked" style={v({ "--h": 195 })}>
               <span className="label">
                 distance
-                <span className="nerd-comment">geo: ipapi.co, city-level, no cookies</span>
               </span>
               <h3>you are this far from me</h3>
               <Distance />
             </div>
             <div className="card inked" style={v({ "--h": 300 })}>
               <span className="label">the guestbook</span>
-              <h3>leave a mark before you go</h3>
+              <h3>sign the guestbook</h3>
               <SignaturePad />
             </div>
           </div>
@@ -751,12 +953,12 @@ export default function PortfolioShell() {
           <div className="contact inked redraw reveal" style={v({ "--h": 25 })}>
             <div className="contact-copy">
               <span className="label">
-                <span className="section-no">08</span> one last thing
+                <span className="section-no">09</span> contact
               </span>
               <h2>
-                have a problem worth <em>opening a laptop</em> for?
+                want to <em>work together</em>?
               </h2>
-              <p className="contact-lead">Send me the messy version. That one is usually more interesting.</p>
+              <p className="contact-lead">Email me about a job, a project, or anything you are building. I reply to every email.</p>
               <div className="mail-row">
                 <a className="mail-link" href={`mailto:${EMAIL}`}>
                   <span data-scramble>{EMAIL}</span>
@@ -775,7 +977,6 @@ export default function PortfolioShell() {
                   <ArrowIcon />
                 </ExternalLink>
               </div>
-              <p className="hand contact-aside">probably up too late building something</p>
             </div>
             <Ink d={doodles.letter} id="ink-letter" className="sketch contact-art" />
           </div>
@@ -785,7 +986,7 @@ export default function PortfolioShell() {
       <footer className="site-footer shell">
         <AsciiCricket />
         <p className="footer-status">
-          <Manifest /> · 7 things shipped · 1 pasta incident, unresolved
+          <Manifest /> · 7 projects shipped
         </p>
         <div className="footer-bar">
           <Wordmark href="#top" />
@@ -798,6 +999,8 @@ export default function PortfolioShell() {
           </a>
         </div>
       </footer>
+      </>
+      )}
     </div>
   );
 }

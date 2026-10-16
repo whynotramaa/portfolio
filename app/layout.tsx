@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 const sansFont =
-  "https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@300..700&family=Plus+Jakarta+Sans:wght@300..700&display=swap";
+  "https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300..700&display=swap";
 
 const themeScript = `
 try {

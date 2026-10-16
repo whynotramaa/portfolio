@@ -1,29 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { projects, type Project } from "@/lib/projects";
 import { Sketch } from "@/components/sketches";
 
 const hues = [150, 345, 250, 25, 300, 50, 85, 195];
-
-export function FlipWords({ words, every = 2400 }: { words: string[]; every?: number }) {
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setInterval(() => setI((n) => (n + 1) % words.length), every);
-    return () => window.clearInterval(timer);
-  }, [words, every]);
-
-  return (
-    <em className="flip" aria-label={words[0]}>
-      <span key={i} className="flip-word" aria-hidden="true">
-        {words[i]}
-      </span>
-    </em>
-  );
-}
 
 function ExternalLink({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
   return (
@@ -73,7 +55,7 @@ export default function Work({ items = projects }: { items?: Project[] }) {
               <h3>
                 <ExternalLink href={project.href}>{project.name}</ExternalLink>
               </h3>
-              <p className="hand proj-hook">{project.hook}</p>
+              <p className="proj-hook">{project.hook}</p>
               <p className="proj-stat">
                 <strong>{project.proof.value}</strong>
                 <span>{project.proof.label}</span>
