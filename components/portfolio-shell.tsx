@@ -638,6 +638,9 @@ export default function PortfolioShell() {
       <header className="site-header">
         <Wordmark href="#top" />
         <div className="header-tools">
+          <a className="label" href="https://blog.ramaa.tech">
+            blog
+          </a>
           <span className="label header-clock">
             <Clock time={time} /> ist
           </span>
