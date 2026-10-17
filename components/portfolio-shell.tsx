@@ -153,6 +153,20 @@ export function ThemeToggle() {
   );
 }
 
+function BlogIcon() {
+  return (
+    <svg className="glyph blog-glyph" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path
+        d="M10 5.2C8 3.7 5.2 3.3 2.6 3.8v11.4c2.6-.5 5.4-.1 7.4 1.4 2-1.5 4.8-1.9 7.4-1.4V3.8C14.8 3.3 12 3.7 10 5.2Zm0 0v11.4M5 7.4c1-.1 2-.0 3 .4M5 10.2c1-.1 2 0 3 .4M12 7.8c1-.4 2-.5 3-.4"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function AiScribble() {
   return (
     <svg className="glyph glyph-wide ai-scribble" viewBox="0 0 26 16" fill="none" aria-hidden="true">
@@ -433,6 +447,7 @@ function portfolioMarkdown() {
     "status: open to full-time roles",
     `email: ${EMAIL}`,
     "github: https://github.com/whynotramaa",
+    "blog: https://blog.ramaa.tech",
     "timezone: IST (Asia/Kolkata)",
     "---",
     "",
@@ -489,6 +504,7 @@ function portfolioMarkdown() {
     "",
     `- **email:** [${EMAIL}](mailto:${EMAIL})`,
     "- **github:** [github.com/whynotramaa](https://github.com/whynotramaa)",
+    "- **blog:** [blog.ramaa.tech](https://blog.ramaa.tech)",
   ].join("\n");
 }
 
@@ -638,8 +654,10 @@ export default function PortfolioShell() {
       <header className="site-header">
         <Wordmark href="#top" />
         <div className="header-tools">
-          <a className="label" href="https://blog.ramaa.tech">
+          <a className="header-link" href="https://blog.ramaa.tech" data-tip="notes, half-baked and otherwise">
+            <BlogIcon />
             blog
+            <ArrowIcon />
           </a>
           <span className="label header-clock">
             <Clock time={time} /> ist
@@ -979,6 +997,11 @@ export default function PortfolioShell() {
                   github
                   <ArrowIcon />
                 </ExternalLink>
+                <a className="button button-ghost" href="https://blog.ramaa.tech">
+                  <BlogIcon />
+                  blog
+                  <ArrowIcon />
+                </a>
               </div>
             </div>
             <Ink d={doodles.letter} id="ink-letter" className="sketch contact-art" />

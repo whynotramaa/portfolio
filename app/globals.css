@@ -154,6 +154,27 @@ html.seen .loader { display: none; }
 }
 .header-tools { display: flex; align-items: center; gap: 8px; }
 .header-clock { margin-right: 6px; }
+.header-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px 0 9px;
+  border-radius: 11px;
+  corner-shape: squircle;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  font: 12px var(--mono);
+  transition: color 0.2s, border-color 0.2s, scale 0.2s var(--ease);
+}
+.header-link:hover { color: var(--ink); border-color: var(--line-2); }
+.header-link:active { scale: 0.95; }
+.header-link .arrow-icon { width: 10px; height: 10px; opacity: 0.6; transition: translate 0.3s var(--ease), opacity 0.2s; }
+.header-link:hover .arrow-icon { translate: 1.5px -1.5px; opacity: 1; }
+.blog-glyph { transform-origin: 50% 80%; transition: rotate 0.4s var(--ease); }
+:is(.header-link, .button):hover .blog-glyph { rotate: -8deg; }
+.button .blog-glyph { width: 15px; height: 15px; }
 .site-header [data-tip]::after { bottom: auto; top: calc(100% + 8px); }
 
 .wordmark { display: inline-flex; align-items: center; gap: 7px; font-family: var(--serif); font-size: 21px; line-height: 1; }
